@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:backgroundTint="#FB9FC8"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="התחברות"
+        android:textColor="@color/button_color"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:hint="דואר אלקטרוני"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:background="@drawable/input_field_bg"
+
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:hint="סיסמא"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:background="@drawable/input_field_bg"
+
+        android:textSize="18sp" />
+
+    <!-- כפתור התחברות -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
+        android:padding="14dp"
+        android:text="התחבר"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/signupRedirect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="אין לך חשבון? הירשם"
+        android:textColor="@color/button_color"
+        android:textSize="16sp" />
+</LinearLayout>

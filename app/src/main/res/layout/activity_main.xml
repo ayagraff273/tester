@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+    <ImageButton
+        android:id="@+id/thecollection"
+        android:src="@drawable/dots"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+
+        />
+
+
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WardrobePal "
+        android:textSize="45sp"
+        android:textColor="#66005E"
+        android:fontFamily="cursive"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/thecollection"
+
+        android:layout_marginTop="24dp" />
+    <TextView
+        android:id="@+id/headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="choose your outfit of the day!"
+        android:textSize="20sp"
+        android:textColor="@color/button_color"
+        android:fontFamily="serif-monospace"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/appName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <ImageView
+        android:id="@+id/shirt"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/shirt2"
+        android:contentDescription="חולצה"
+        app:layout_constraintTop_toBottomOf="@id/headline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_background"
+        android:elevation="4dp" />
+
+    <ImageView
+        android:id="@+id/shirtArrowLeft"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/arrow_left"
+        android:contentDescription="חץ שמאלה עבור חולצה"
+        app:layout_constraintTop_toTopOf="@id/shirt"
+        app:layout_constraintBottom_toBottomOf="@id/shirt"
+        app:layout_constraintEnd_toStartOf="@id/shirt"
+        android:layout_marginEnd="8dp" />
+
+ <ImageView
+     android:id="@+id/shirtArrowRight"
+     android:layout_width="40dp"
+     android:layout_height="40dp"
+     android:layout_marginStart="8dp"
+     android:contentDescription="חץ ימינה עבור חולצה"
+     android:src="@drawable/arrow_right"
+     app:layout_constraintBottom_toBottomOf="@id/shirt"
+     app:layout_constraintStart_toEndOf="@id/shirt"
+     app:layout_constraintTop_toTopOf="@id/shirt" />
+
+
+
+    <ImageView
+        android:id="@+id/imageViewPants"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/sample_pants"
+        android:contentDescription="מכנסיים"
+        app:layout_constraintTop_toBottomOf="@id/shirt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_background"
+        android:elevation="4dp" />
+
+    <ImageView
+        android:id="@+id/pantsArrowLeft"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/arrow_left"
+        android:contentDescription="חץ שמאלה עבור מכנסיים"
+        app:layout_constraintTop_toTopOf="@id/imageViewPants"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewPants"
+        app:layout_constraintEnd_toStartOf="@id/imageViewPants"
+        android:layout_marginEnd="8dp" />
+
+    <ImageView
+        android:id="@+id/pantsArrowRight"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/arrow_right"
+        android:contentDescription="חץ ימינה עבור מכנסיים"
+        app:layout_constraintTop_toTopOf="@id/imageViewPants"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewPants"
+        app:layout_constraintStart_toEndOf="@id/imageViewPants"
+        android:layout_marginStart="8dp" />
+
+    <Button
+        android:id="@+id/random"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="24dp"
+        android:drawableBottom="@drawable/random2"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="ערבוב בגדים"
+        android:background="?attr/selectableItemBackground"
+
+        app:layout_constraintTop_toBottomOf="@id/imageViewPants" />
+ <Button
+     android:id="@+id/addcloths"
+     android:layout_width="50dp"
+     android:layout_height="50dp"
+     android:layout_marginEnd="16dp"
+     android:layout_marginBottom="64dp"
+     android:backgroundTint="@null"
+     android:padding="0dp"
+     android:contentDescription="הוסף בגדים"
+     android:drawableTop="@drawable/plus_small"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     android:background="@null"
+
+     />
+
+
+    <ImageButton
+        android:id="@+id/favorites"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/favorite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="328dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

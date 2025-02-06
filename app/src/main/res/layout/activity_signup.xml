@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp"
+    android:background="#FB9FC8"
+
+    >
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="הרשמה"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/button_color"
+        android:layout_marginBottom="20dp" />
+
+    <EditText
+        android:id="@+id/fullname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="שם מלא"
+        android:textSize="18sp"
+        android:layout_marginBottom="15dp"
+        android:padding="10dp"
+        android:background="@drawable/input_field_bg"
+
+        android:inputType="textPersonName" />
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="שם משתמש"
+        android:textSize="18sp"
+        android:layout_marginBottom="15dp"
+        android:padding="10dp"
+        android:background="@drawable/input_field_bg"
+
+        android:inputType="text" />
+
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="דואר אלקטרוני"
+        android:textSize="18sp"
+        android:layout_marginBottom="15dp"
+        android:padding="10dp"
+        android:background="@drawable/input_field_bg"
+
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="סיסמא"
+        android:textSize="18sp"
+        android:layout_marginBottom="25dp"
+        android:padding="10dp"
+        android:background="@drawable/input_field_bg"
+
+        android:inputType="textPassword" />
+
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="הרשמה"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/button_color"
+        android:padding="12dp" />
+
+    <TextView
+        android:id="@+id/loginRedirect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="כבר יש לך חשבון? התחבר"
+        android:textSize="16sp"
+        android:textColor="@color/button_color"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:clickable="true" />
+</LinearLayout>

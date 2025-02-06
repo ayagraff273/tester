@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/background_color"
+    android:padding="20dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ברוכים הבאים!"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/primary_text"
+        android:layout_marginBottom="20dp" />
+    <ImageView
+        android:id="@+id/shirtImage"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:src="@drawable/shirt1"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="4dp"
+
+        />
+
+    <!-- תמונה של מכנסיים -->
+    <ImageView
+        android:id="@+id/pantsImage"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:src="@drawable/sample_pants"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="8dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="אנא התחברו או הירשמו כדי להמשיך"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@color/secondary_text"
+        android:layout_marginBottom="30dp" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="התחברות"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/button_color"
+        android:layout_marginBottom="10dp"
+        android:padding="12dp" />
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="הרשמה"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/button_color"
+        android:padding="12dp" />
+
+</LinearLayout>
