@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void randomOutfit() {
+
+        // test
         Random random = new Random();
         currentShirtIndex = random.nextInt(shirts.length);
         currentPantsIndex = random.nextInt(pantsArray.length);
