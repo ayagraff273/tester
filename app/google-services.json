@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396411143814",
+    "project_id": "tester-22947",
+    "storage_bucket": "tester-22947.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396411143814:android:4150f285864a12b6137307",
+        "android_client_info": {
+          "package_name": "com.graff.tester"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6C6XctkAHJli86SLZS6FAqESMSr723U8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
