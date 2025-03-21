@@ -1,24 +1,35 @@
 package com.graff.tester;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.Arrays;
+import java.util.List;
 
-public class gallery extends AppCompatActivity {
+public class gallery extends AppCompatActivity { // שיניתי את השם ל-GalleryActivity לפי מוסכמות השמות
+    private RecyclerView recyclerView;
+    private GalleryAdapter adapter;
+    private List<Integer> imageList = Arrays.asList(
+            R.drawable.shirt1,
+            R.drawable.shirt2,
+            R.drawable.pants3,
+            R.drawable.pants4,
+            R.drawable.pants5,
+            R.drawable.shirt6
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_gallery);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        setContentView(R.layout.activity_gallery); // הורדתי את ה-); השגוי
+
+        recyclerView = findViewById(R.id.recyclerView_gallery);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new GalleryAdapter(this, imageList);
+        recyclerView.setAdapter(adapter);
     }
 }
