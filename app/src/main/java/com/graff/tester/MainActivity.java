@@ -1,6 +1,9 @@
 package com.graff.tester;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -18,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private int currentPantsIndex = 0;
     private int[] shirts = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.sample_shirt};
     private int[] pantsArray = {R.drawable.pants, R.drawable.pants2, R.drawable.pants3};
+    private ImageButton thecollection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
         shirt = findViewById(R.id.shirt);
         pants = findViewById(R.id.imageViewPants);
-
+        thecollection = findViewById(R.id.thecollection);
+        thecollection.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, gallery.class);
+            startActivity(intent);
+        });
         findViewById(R.id.shirtArrowLeft).setOnClickListener(v -> changeShirt(-1));
         findViewById(R.id.shirtArrowRight).setOnClickListener(v -> changeShirt(1));
         findViewById(R.id.pantsArrowLeft).setOnClickListener(v -> changePants(-1));

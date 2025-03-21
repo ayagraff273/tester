@@ -4,10 +4,40 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp">
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:textSize="16sp"
+        android:backgroundTint="#66005E"
+        android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/galleryHeadline"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:fontFamily="cursive"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:text="the closet"
+        android:textColor="#66005E"
+        android:textSize="45sp"
+        android:textStyle="bold" />
+
+
+
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
       />
+
+
+
+
 </LinearLayout>
