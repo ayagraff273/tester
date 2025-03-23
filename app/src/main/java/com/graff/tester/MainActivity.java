@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         shirt = findViewById(R.id.shirt);
         pants = findViewById(R.id.imageViewPants);
         thecollection = findViewById(R.id.thecollection);
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, gallery.class);
             startActivity(intent);
         });
+
         addclothes=findViewById(R.id.addcloths);
         addclothes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
                         Intent data = result.getData();
                         if (data != null) {
                             Uri selectedImage = data.getData();
-                            //todo add to firebade
+                            FirebaseManager.getInstance()
+                                    .uploadImageToFirebase(MainActivity.this, selectedImage);
                         }
 
                     }
