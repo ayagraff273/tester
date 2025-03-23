@@ -27,7 +27,26 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Calculate card size dynamically
+        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        int columns = 3; // same as your GridLayoutManager
+        int spacing = dpToPx(16); // adjust based on margins (4dp each side * 2 or more)
+        int size = (screenWidth / columns) - spacing;
+
+        // Set itemView's width and height to make it square
+        ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
+        if (params != null) {
+            params.width = size;
+            params.height = size;
+            holder.itemView.setLayoutParams(params);
+        }
+
+        // Load the image
         holder.imageView.setImageResource(imageList.get(position));
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
     @Override
