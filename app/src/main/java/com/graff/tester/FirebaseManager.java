@@ -29,7 +29,7 @@ public class FirebaseManager {
         return instance;
     }
 
-    public void uploadImageToFirebase(Context context, Uri imageUri) {
+    public void uploadImageToFirebase(Context context, Uri imageUri, String itemType) {
         if (imageUri == null) {
             Toast.makeText(context, "Failed to convert image", Toast.LENGTH_SHORT).show();
             return;
@@ -44,7 +44,7 @@ public class FirebaseManager {
                     storageRef.getMetadata().addOnSuccessListener(storageMetadata -> {
                         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             String imageUrl = uri.toString();
-                            saveImageToFirestore(context, imageUrl);
+                            saveImageToFirestore(context, imageUrl, itemType);
                         });
                     }).addOnFailureListener(e -> {
                         Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show();
@@ -53,12 +53,12 @@ public class FirebaseManager {
 
     }
 
-    public void saveImageToFirestore(Context context, String imageUrl) {
+    public void saveImageToFirestore(Context context, String imageUrl, String itemType) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> clothingItem = new HashMap<>();
         clothingItem.put("imageUrl", imageUrl);
-        clothingItem.put("type", "Pants"); // Example clothing type
+        clothingItem.put("type", itemType); // Example clothing type
 
         db.collection("clothes").add(clothingItem)
                 .addOnSuccessListener(documentReference -> {

@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private int[] pantsArray = {R.drawable.pants, R.drawable.pants2, R.drawable.pants3};
     private ImageButton thecollection;
     private Button addclothes;
+    private String itemType;
 
 
     @Override
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         addclothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MainActivity.this.itemType = "Shirt";
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 addimageActivityResultLauncher.launch(intent);
             }
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         if (data != null) {
                             Uri selectedImage = data.getData();
                             FirebaseManager.getInstance()
-                                    .uploadImageToFirebase(MainActivity.this, selectedImage);
+                                    .uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.itemType);
                         }
 
                     }
