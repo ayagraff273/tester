@@ -156,18 +156,6 @@
      />
 
 
-    <ImageButton
-        android:id="@+id/favorites"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/favorite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="328dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="20dp"
-        />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
