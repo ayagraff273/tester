@@ -46,17 +46,17 @@ public class FirebaseManager {
                 .getReference("clothes/" + System.currentTimeMillis() + "." + fileExtension);
 
         storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
+                .addOnSuccessListener(taskSnapshot ->
                     // Check if file exists before getting download URL
-                    storageRef.getMetadata().addOnSuccessListener(storageMetadata -> {
+                    storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
                         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             String imageUrl = uri.toString();
                             saveImageToFirestore(context, imageUrl, clothingType);
-                        });
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show();
-                    });
-                });
+                        })
+                    ).addOnFailureListener(e ->
+                        Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
+                    )
+                );
 
     }
 
@@ -72,12 +72,12 @@ public class FirebaseManager {
         clothingItem.put("updatedAt", ts);
 
         db.collection("clothes").add(clothingItem)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(context, "Image saved!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(context, "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnSuccessListener(documentReference ->
+                    Toast.makeText(context, "Image saved!", Toast.LENGTH_SHORT).show()
+                )
+                .addOnFailureListener(e ->
+                    Toast.makeText(context, "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 
     private static String getFileExtension(Context context, Uri uri) {
