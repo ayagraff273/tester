@@ -11,15 +11,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.graff.tester.models.ClothingType;
+
 import java.util.Random;
 
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private int[] pantsArray = {R.drawable.pants, R.drawable.pants2, R.drawable.pants3};
     private ImageButton thecollection;
     private Button addclothes;
-    private String itemType;
+    private ClothingType clothingType;
 
 
     @Override
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         addclothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.itemType = "Shirt";
+                MainActivity.this.clothingType = ClothingType.SHIRT;
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 addimageActivityResultLauncher.launch(intent);
             }
@@ -76,9 +75,8 @@ public class MainActivity extends AppCompatActivity {
                         if (data != null) {
                             Uri selectedImage = data.getData();
                             FirebaseManager.getInstance()
-                                    .uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.itemType);
+                                    .uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.clothingType);
                         }
-
                     }
                 }
             });
