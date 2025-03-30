@@ -50,7 +50,13 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
 
         theCollection = findViewById(R.id.thecollection);
         theCollection.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, gallery.class);
+            // Combine both shirt and pants images into one list (if needed)
+            List<String> allImages = new ArrayList<>();
+            allImages.addAll(shirtImages);
+            allImages.addAll(pantsImages);
+            // Pass image URLs to GalleryActivity
+            Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
+            intent.putStringArrayListExtra("imageUrls", new ArrayList<>(allImages));
             startActivity(intent);
         });
 
@@ -121,7 +127,8 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
 
     @Override
     public void onAllImagesLoaded(List<String> shirtUrls, List<String> pantsUrls) {
-        this.shirtImages = shirtUrls;
-        this.pantsImages = pantsUrls;
+        // TODO: enable the gallery button only after all the images have been loaded (?)
+        shirtImages = shirtUrls;
+        pantsImages = pantsUrls;
     }
 }

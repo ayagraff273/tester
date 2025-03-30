@@ -6,21 +6,14 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-public class gallery extends AppCompatActivity { // שיניתי את השם ל-GalleryActivity לפי מוסכמות השמות
+public class GalleryActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private GalleryAdapter adapter;
     private Button btnBack;
-    private List<Integer> imageList = Arrays.asList(
-            R.drawable.shirt1,
-            R.drawable.shirt2,
-            R.drawable.pants3,
-            R.drawable.pants4,
-            R.drawable.pants5,
-            R.drawable.shirt6
-    );
+    private List<String> imageUrls = new ArrayList<>();  // List of URLs for images
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +23,15 @@ public class gallery extends AppCompatActivity { // שיניתי את השם ל-
         btnBack.setOnClickListener(v -> finish());
         recyclerView = findViewById(R.id.recyclerView_gallery);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 3); // 3 עמודות
+        // Get the image URLs from MainActivity (passed via Intent or other mechanism)
+        if (getIntent() != null) {
+            imageUrls = getIntent().getStringArrayListExtra("imageUrls");
+        }
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 3); // 3 columns
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new GalleryAdapter(this, imageList);
+        adapter = new GalleryAdapter(this, imageUrls);
         recyclerView.setAdapter(adapter);
     }
 }

@@ -19,7 +19,7 @@
             android:name=".SignupActivity2"
             android:exported="false" />
         <activity
-            android:name=".gallery"
+            android:name=".GalleryActivity"
             android:exported="false" />
         <activity
             android:name=".Opening"
