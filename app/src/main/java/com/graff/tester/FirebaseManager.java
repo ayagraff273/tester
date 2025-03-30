@@ -4,34 +4,78 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.graff.tester.models.ClothingType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import com.bumptech.glide.Glide;
 
 public class FirebaseManager {
-
-    private static FirebaseManager instance;
+    final private Context context;
+    final private FirebaseFirestore db;
+    private boolean firstShirtSent = false;
+    private boolean firstPantsSent = false;
+    final private List<String> shirtImages = new ArrayList<>();
+    final private List<String> pantsImages = new ArrayList<>();
+    final private FirebaseCallback callback;
 
     // Private constructor so no one can instantiate from outside
-    private FirebaseManager() {
-        // Initialize Firebase here if needed, for example:
-        // FirebaseApp.initializeApp(context);
+    public FirebaseManager(Context context, FirebaseCallback callback) {
+        this.context = context;
+        this.db = FirebaseFirestore.getInstance();
+        this.callback = callback;
     }
 
-    // 3. Public method to get the single instance
-    public static synchronized FirebaseManager getInstance() {
-        if (instance == null) {
-            instance = new FirebaseManager();
+    public void loadClothingImages() {
+        db.collection("clothes")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        String imageUrl = doc.getString("imageUrl");
+                        String typeString = doc.getString("type");
+                        ClothingType type = ClothingType.fromString(typeString);
+
+                        if (imageUrl != null && type != null) {
+                            if (type == ClothingType.SHIRT) {
+                                shirtImages.add(imageUrl);
+                                if (!firstShirtSent) {
+                                    callback.onFirstImageLoaded(ClothingType.SHIRT, imageUrl);
+                                    firstShirtSent = true;
+                                }
+                            } else if (type == ClothingType.PANTS) {
+                                pantsImages.add(imageUrl);
+                                if (!firstPantsSent) {
+                                    callback.onFirstImageLoaded(ClothingType.PANTS, imageUrl);
+                                    firstPantsSent = true;
+                                }
+                            }
+                        }
+                    }
+
+                    // Send full lists when done
+                    callback.onAllImagesLoaded(shirtImages, pantsImages);
+                })
+                .addOnFailureListener(e -> Log.e("Firebase", "Error loading images", e));
+    }
+
+    // Preload images into Glide cache
+    private void preloadImages(List<String> imageUrls) {
+        for (String url : imageUrls) {
+            Glide.with(this.context).load(url).preload();
         }
-        return instance;
     }
 
     public void uploadImageToFirebase(Context context, Uri imageUri, ClothingType clothingType) {
@@ -41,9 +85,10 @@ public class FirebaseManager {
         }
 
         String fileExtension = getFileExtension(context, imageUri);
+        String uniqueId = UUID.randomUUID().toString();  // Generates a unique ID for each image
 
         StorageReference storageRef = FirebaseStorage.getInstance()
-                .getReference("clothes/" + System.currentTimeMillis() + "." + fileExtension);
+                .getReference("clothes/" + uniqueId + "." + fileExtension);
 
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot ->
@@ -70,6 +115,8 @@ public class FirebaseManager {
         Timestamp ts = Timestamp.now();
         clothingItem.put("createdAt", ts);
         clothingItem.put("updatedAt", ts);
+        String uniqueId = UUID.randomUUID().toString();  // Generates a unique ID for each image
+        clothingItem.put("uniqueId", uniqueId);  // Store unique ID in Firestore
 
         db.collection("clothes").add(clothingItem)
                 .addOnSuccessListener(documentReference ->
@@ -114,4 +161,8 @@ public class FirebaseManager {
         return (extension != null) ? extension : "";  // Default to empty string if null
     }
 
+    public interface FirebaseCallback {
+        void onFirstImageLoaded(ClothingType type, String imageUrl);
+        void onAllImagesLoaded(List<String> shirtImages, List<String> pantsImages);
+    }
 }

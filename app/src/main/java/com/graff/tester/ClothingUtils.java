@@ -16,10 +16,13 @@ public class ClothingUtils {
     public static Uri getImageUriFromDrawable(Context context, int drawableId) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId);
 
-        File file = new File(context.getCacheDir(), "temp_image.jpg");
+        // Create a unique filename for each image by using the drawable ID
+        String fileName = "temp_image_" + drawableId + ".jpg";
+        File file = new File(context.getCacheDir(), fileName);  // Use drawableId to ensure uniqueness
+
         try {
             FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);  // You might want to reduce the quality to 80 or lower
             out.flush();
             out.close();
         } catch (IOException e) {
@@ -31,14 +34,26 @@ public class ClothingUtils {
 
     public static void uploadClothingDrawableToFirebase(Context context, int drawableId, ClothingType clothingType) {
         Uri imageUri = getImageUriFromDrawable(context, drawableId); // e.g. R.drawable.pants
-        FirebaseManager manager = FirebaseManager.getInstance();
+        FirebaseManager manager = new FirebaseManager(context, null);
         manager.uploadImageToFirebase(context, imageUri, clothingType);
     }
 
     public static void uploadAllLocalClothingDrawablesToFirebase(Context context) {
-        int[] shirts = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.sample_shirt};
-        int[] pantsArray = {R.drawable.pants, R.drawable.pants2, R.drawable.pants3};
-        FirebaseManager manager = FirebaseManager.getInstance();
+        int[] shirts = {
+                R.drawable.shirt2,
+                R.drawable.shirt3,
+                R.drawable.shirt4,
+                R.drawable.shirt5,
+                R.drawable.shirt6
+        };
+        int[] pantsArray = {
+                R.drawable.pants,
+                R.drawable.pants2,
+                R.drawable.pants3,
+                R.drawable.pants4,
+                R.drawable.pants5
+        };
+        FirebaseManager manager = new FirebaseManager(context, null);
         for (int shirt: shirts) {
             Uri imageUri = getImageUriFromDrawable(context, shirt);
             manager.uploadImageToFirebase(context, imageUri, ClothingType.SHIRT);

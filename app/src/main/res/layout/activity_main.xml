@@ -53,7 +53,7 @@
         android:layout_marginTop="32dp" />
 
     <ImageView
-        android:id="@+id/shirt"
+        android:id="@+id/imageViewShirt"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/shirt2"
@@ -71,9 +71,9 @@
         android:layout_height="40dp"
         android:src="@drawable/arrow_left"
         android:contentDescription="חץ שמאלה עבור חולצה"
-        app:layout_constraintTop_toTopOf="@id/shirt"
-        app:layout_constraintBottom_toBottomOf="@id/shirt"
-        app:layout_constraintEnd_toStartOf="@id/shirt"
+        app:layout_constraintTop_toTopOf="@id/imageViewShirt"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
+        app:layout_constraintEnd_toStartOf="@id/imageViewShirt"
         android:layout_marginEnd="8dp" />
 
  <ImageView
@@ -83,9 +83,9 @@
      android:layout_marginStart="8dp"
      android:contentDescription="חץ ימינה עבור חולצה"
      android:src="@drawable/arrow_right"
-     app:layout_constraintBottom_toBottomOf="@id/shirt"
-     app:layout_constraintStart_toEndOf="@id/shirt"
-     app:layout_constraintTop_toTopOf="@id/shirt" />
+     app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
+     app:layout_constraintStart_toEndOf="@id/imageViewShirt"
+     app:layout_constraintTop_toTopOf="@id/imageViewShirt" />
 
 
 
@@ -95,7 +95,7 @@
         android:layout_height="200dp"
         android:src="@drawable/sample_pants"
         android:contentDescription="מכנסיים"
-        app:layout_constraintTop_toBottomOf="@id/shirt"
+        app:layout_constraintTop_toBottomOf="@id/imageViewShirt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"

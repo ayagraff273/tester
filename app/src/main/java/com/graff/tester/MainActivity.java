@@ -17,20 +17,25 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.graff.tester.models.ClothingType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity {
-    private ImageView shirt, pants;
+public class MainActivity extends AppCompatActivity implements FirebaseManager.FirebaseCallback {
+    private ImageView shirtView, pantsView;
+    private List<String> shirtImages = new ArrayList<>();
+    private List<String> pantsImages = new ArrayList<>();
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
-    private int[] shirts = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.sample_shirt};
-    private int[] pantsArray = {R.drawable.pants, R.drawable.pants2, R.drawable.pants3};
-    private ImageButton thecollection;
-    private Button addclothes;
+    private ImageButton theCollection;
+    private Button addClothes;
     private ClothingType clothingType;
+
+    private FirebaseManager firebaseManager;
 
 
     @Override
@@ -40,21 +45,23 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        shirt = findViewById(R.id.shirt);
-        pants = findViewById(R.id.imageViewPants);
-        thecollection = findViewById(R.id.thecollection);
-        thecollection.setOnClickListener(v -> {
+        shirtView = findViewById(R.id.imageViewShirt);
+        pantsView = findViewById(R.id.imageViewPants);
+
+        theCollection = findViewById(R.id.thecollection);
+        theCollection.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, gallery.class);
             startActivity(intent);
         });
 
-        addclothes=findViewById(R.id.addcloths);
-        addclothes.setOnClickListener(new View.OnClickListener() {
+        addClothes =findViewById(R.id.addcloths);
+        addClothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MainActivity.this.clothingType = ClothingType.SHIRT;
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 addimageActivityResultLauncher.launch(intent);
+//                ClothingUtils.uploadAllLocalClothingDrawablesToFirebase(MainActivity.this);
             }
         });
         findViewById(R.id.shirtArrowLeft).setOnClickListener(v -> changeShirt(-1));
@@ -62,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.pantsArrowLeft).setOnClickListener(v -> changePants(-1));
         findViewById(R.id.pantsArrowRight).setOnClickListener(v -> changePants(1));
         findViewById(R.id.random).setOnClickListener(v -> randomOutfit());
+
+        firebaseManager = new FirebaseManager(this, this);
+        firebaseManager.loadClothingImages();
     }
 
     ActivityResultLauncher<Intent> addimageActivityResultLauncher = registerForActivityResult(
@@ -74,30 +84,44 @@ public class MainActivity extends AppCompatActivity {
                         Intent data = result.getData();
                         if (data != null) {
                             Uri selectedImage = data.getData();
-                            FirebaseManager.getInstance()
-                                    .uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.clothingType);
+                            firebaseManager.uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.clothingType);
                         }
                     }
                 }
             });
 
     private void changeShirt(int direction) {
-        currentShirtIndex = (currentShirtIndex + direction + shirts.length) % shirts.length;
-        shirt.setImageResource(shirts[currentShirtIndex]);
+        currentShirtIndex = (currentShirtIndex + direction + shirtImages.size()) % shirtImages.size();
+        Glide.with(this).load(shirtImages.get(currentShirtIndex)).into(shirtView);
     }
 
     private void changePants(int direction) {
-        currentPantsIndex = (currentPantsIndex + direction + pantsArray.length) % pantsArray.length;
-        pants.setImageResource(pantsArray[currentPantsIndex]);
+        currentPantsIndex = (currentPantsIndex + direction + pantsImages.size()) % pantsImages.size();
+        Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
     }
 
     private void randomOutfit() {
-
-        // test
         Random random = new Random();
-        currentShirtIndex = random.nextInt(shirts.length);
-        currentPantsIndex = random.nextInt(pantsArray.length);
-        shirt.setImageResource(shirts[currentShirtIndex]);
-        pants.setImageResource(pantsArray[currentPantsIndex]);
+        currentShirtIndex = random.nextInt(shirtImages.size());
+        currentPantsIndex = random.nextInt(pantsImages.size());
+        Glide.with(this).load(shirtImages.get(currentShirtIndex)).into(shirtView);
+        Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
+    }
+
+    @Override
+    public void onFirstImageLoaded(ClothingType type, String imageUrl) {
+        runOnUiThread(() -> {
+            if (type == ClothingType.SHIRT) {
+                Glide.with(this).load(imageUrl).into(shirtView);
+            } else if (type == ClothingType.PANTS) {
+                Glide.with(this).load(imageUrl).into(pantsView);
+            }
+        });
+    }
+
+    @Override
+    public void onAllImagesLoaded(List<String> shirtUrls, List<String> pantsUrls) {
+        this.shirtImages = shirtUrls;
+        this.pantsImages = pantsUrls;
     }
 }
