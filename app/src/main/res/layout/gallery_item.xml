@@ -12,4 +12,15 @@
         android:scaleType="fitCenter"
 
         />
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:scaleType="fitCenter"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/trash"
+    android:contentDescription="מחק פריט"
+    android:background="?android:attr/selectableItemBackground" />
+
 </FrameLayout>
