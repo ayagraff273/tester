@@ -4,11 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FirebaseManager {
@@ -68,4 +71,27 @@ public class FirebaseManager {
                     Toast.makeText(context, "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+   //need to check if it works
+    public void fetchImagesFromFirestore(OnImagesFetchedListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("clothes").get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> imageUrls = new ArrayList<>();
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        String imageUrl = document.getString("imageUrl");
+                        if (imageUrl != null) {
+                            imageUrls.add(imageUrl);
+                        }
+                    }
+                    listener.onImagesFetched(imageUrls);
+                })
+                .addOnFailureListener(e -> listener.onFetchFailed(e.getMessage()));
+    }
+    public interface OnImagesFetchedListener {
+        void onImagesFetched(List<String> imageUrls);
+        void onFetchFailed(String error);
+    }
+
+
 }
