@@ -39,7 +39,7 @@ public class FirebaseManager {
         }
 
         StorageReference storageRef = FirebaseStorage.getInstance()
-                .getReference("clothes/" + System.currentTimeMillis() + ".jpg");
+                .getReference("clothes/" + itemType + "/"+ System.currentTimeMillis() + ".jpg");
 
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
