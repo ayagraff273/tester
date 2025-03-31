@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton thecollection;
     private Button addclothes;
     private String itemType;
+    private ImageButton addshirt;
+    private ImageButton addpants;
+
+
 
 
     @Override
@@ -49,8 +53,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        addclothes=findViewById(R.id.addcloths);
-        addclothes.setOnClickListener(new View.OnClickListener() {
+       // addclothes=findViewById(R.id.addcloths);
+      //  addclothes.setOnClickListener(new View.OnClickListener() {
+           // @Override
+          //  public void onClick(View view) {
+              //  MainActivity.this.itemType = "Shirt";
+              //  Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+              //  addimageActivityResultLauncher.launch(intent);
+           // }
+      //  });
+        addshirt=findViewById(R.id.addShirt);
+        addshirt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MainActivity.this.itemType = "Shirt";
@@ -58,6 +71,17 @@ public class MainActivity extends AppCompatActivity {
                 addimageActivityResultLauncher.launch(intent);
             }
         });
+        addpants=findViewById(R.id.addPants);
+        addpants.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.this.itemType = "Pants";
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                addimageActivityResultLauncher.launch(intent);
+            }
+        });
+
+
         findViewById(R.id.shirtArrowLeft).setOnClickListener(v -> changeShirt(-1));
         findViewById(R.id.shirtArrowRight).setOnClickListener(v -> changeShirt(1));
         findViewById(R.id.pantsArrowLeft).setOnClickListener(v -> changePants(-1));
