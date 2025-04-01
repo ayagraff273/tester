@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView shirt, pants;
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
-    private int[] shirts = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.sample_shirt};
-    private int[] pantsArray = {R.drawable.pants, R.drawable.pants2, R.drawable.pants3};
+    private int[] shirts = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.sample_shirt,R.drawable.shirt6,R.drawable.shirt3,R.drawable.shirt4,R.drawable.shirt5};
+
+    private int[] pantsArray = {R.drawable.pants, R.drawable.pants2,R.drawable.pants4,R.drawable.pants5};
     private ImageButton thecollection;
     private Button addclothes;
     private String itemType;
