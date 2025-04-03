@@ -52,14 +52,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="0dp" />
 
-    <Button
+    <ImageButton
         android:id="@+id/random"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:layout_marginTop="15dp"
         android:drawableBottom="@drawable/random2"
+        android:src="@drawable/random2"
         android:padding="0dp"
-        android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

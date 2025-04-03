@@ -148,6 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 shirt.startAnimation(fadeIn);
                 pants.startAnimation(fadeIn);
             }
-        }, 500); // הזמן שהאנימציה של ה-Fade Out תיקח (500 מילישניות)
+        }, 500); //
     }
 }
