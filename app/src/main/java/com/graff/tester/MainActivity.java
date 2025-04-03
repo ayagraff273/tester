@@ -1,11 +1,14 @@
 package com.graff.tester;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,6 +24,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import java.util.Random;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.os.Handler;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -111,20 +118,36 @@ public class MainActivity extends AppCompatActivity {
     private void changeShirt(int direction) {
         currentShirtIndex = (currentShirtIndex + direction + shirts.length) % shirts.length;
         shirt.setImageResource(shirts[currentShirtIndex]);
+        Animation fadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in);
+        shirt.startAnimation(fadeIn);
     }
 
     private void changePants(int direction) {
+
         currentPantsIndex = (currentPantsIndex + direction + pantsArray.length) % pantsArray.length;
         pants.setImageResource(pantsArray[currentPantsIndex]);
+        Animation fadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in);
+        pants.startAnimation(fadeIn);
     }
 
     private void randomOutfit() {
+        Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        shirt.startAnimation(fadeOut);
+        pants.startAnimation(fadeOut);
 
-        // test
-        Random random = new Random();
-        currentShirtIndex = random.nextInt(shirts.length);
-        currentPantsIndex = random.nextInt(pantsArray.length);
-        shirt.setImageResource(shirts[currentShirtIndex]);
-        pants.setImageResource(pantsArray[currentPantsIndex]);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Random random = new Random();
+                currentShirtIndex = random.nextInt(shirts.length);
+                currentPantsIndex = random.nextInt(pantsArray.length);
+                shirt.setImageResource(shirts[currentShirtIndex]);
+                pants.setImageResource(pantsArray[currentPantsIndex]);
+
+                Animation fadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in);
+                shirt.startAnimation(fadeIn);
+                pants.startAnimation(fadeIn);
+            }
+        }, 500); // הזמן שהאנימציה של ה-Fade Out תיקח (500 מילישניות)
     }
 }
