@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,11 +14,16 @@ import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private Context context;
-    private List<String> imageUrls;  // List of image URLs
+    private List<String> imageUrls;
+//    private List<String> uniqueIds;
+    private FirebaseManager firebaseManager;
+
 
     public GalleryAdapter(Context context, List<String> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;
+//        this.uniqueIds = uniqueIds;
+
     }
 
     @NonNull
@@ -43,11 +50,15 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         }
 
         String imageUrl = imageUrls.get(position);
+//        String uniqueId = uniqueIds.get(position);
+
 
         // Use Glide to load the image URL into the ImageView
         Glide.with(context)
                 .load(imageUrl)
                 .into(holder.imageView);  // Assuming your item layout has an ImageView with this ID
+
+
     }
 
     private int dpToPx(int dp) {
@@ -61,10 +72,18 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        ImageButton btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.galleryImageView);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         }
     }
 }

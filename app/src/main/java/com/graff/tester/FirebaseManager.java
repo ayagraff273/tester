@@ -97,7 +97,7 @@ public class FirebaseManager {
                         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             String imageUrl = uri.toString();
                             saveImageToFirestore(context, imageUrl, clothingType);
-                            callback.addurltolist(clothingType, imageUrl);
+                            callback.addUrlToList(clothingType, imageUrl);
 
                         })
                     ).addOnFailureListener(e ->
@@ -162,10 +162,39 @@ public class FirebaseManager {
 
         return (extension != null) ? extension : "";  // Default to empty string if null
     }
+    public void deleteClothingItem(String imageUrl, String uniqueId, OnDeleteCallback callback) {
+
+        StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+
+        imageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    db.collection("clothes")
+                            .whereEqualTo("uniqueId", uniqueId)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                                        doc.getReference().delete();
+                                    }
+                                    callback.onSuccess();
+                                } else {
+                                    callback.onFailure(new Exception("לא נמצא מסמך תואם למחיקה"));
+                                }
+                            })
+                            .addOnFailureListener(callback::onFailure);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public interface OnDeleteCallback {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
 
     public interface FirebaseCallback {
         void onFirstImageLoaded(ClothingType type, String imageUrl);
         void onAllImagesLoaded(List<String> shirtImages, List<String> pantsImages);
-        void addurltolist(ClothingType type, String imageUrl);
+        void addUrlToList(ClothingType type, String imageUrl);
     }
 }

@@ -6,23 +6,24 @@
     android:padding="4dp">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/galleryImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
 
         />
+
     <ImageButton
         android:id="@+id/btnDelete"
-        android:elevation="5dp"
+        android:layout_width="28dp"
 
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:scaleType="fitCenter"
-        android:layout_alignParentBottom="true"
+        android:layout_height="14dp"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/trash"
-    android:contentDescription="מחק פריט"
-    android:background="?android:attr/selectableItemBackground" />
+        android:layout_alignParentBottom="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="מחק פריט"
+        android:elevation="5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/trash" />
 
 </FrameLayout>

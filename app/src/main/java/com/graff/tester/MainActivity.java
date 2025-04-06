@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
         pantsImages = pantsUrls;
     }
     @Override
-    public void addurltolist(ClothingType type, String imageUrl) {
+    public void addUrlToList(ClothingType type, String imageUrl) {
         runOnUiThread(() -> {
             if (type == ClothingType.SHIRT) {
                 Glide.with(this).load(imageUrl).into(shirtView);
