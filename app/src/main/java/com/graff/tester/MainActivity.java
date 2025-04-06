@@ -20,6 +20,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+
+import com.bumptech.glide.Glide;
+import com.graff.tester.models.ClothingType;
+import java.util.ArrayList;
+import java.util.List;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,52 +35,46 @@ import android.animation.ValueAnimator;
 import android.os.Handler;
 
 
-
-public class MainActivity extends AppCompatActivity {
-    private ImageView shirt, pants;
+public class MainActivity extends AppCompatActivity implements FirebaseManager.FirebaseCallback {
+    private ImageView shirtView, pantsView;
+    private List<String> shirtImages = new ArrayList<>();
+    private List<String> pantsImages = new ArrayList<>();
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
-    private int[] shirts = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.sample_shirt,R.drawable.shirt6,R.drawable.shirt3,R.drawable.shirt4,R.drawable.shirt5};
-
-    private int[] pantsArray = {R.drawable.pants, R.drawable.pants2,R.drawable.pants4,R.drawable.pants5};
-    private ImageButton thecollection;
-    private Button addclothes;
-    private String itemType;
+    private ImageButton theCollection;
     private ImageButton addshirt;
-    private ImageButton addpants;
+	private ImageButton addpants;
+    private ClothingType clothingType;
 
-
+    private FirebaseManager firebaseManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Toast.makeText(this, "Git", Toast.LENGTH_SHORT).show();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        shirt = findViewById(R.id.shirt);
-        pants = findViewById(R.id.imageViewPants);
-        thecollection = findViewById(R.id.thecollection);
-        thecollection.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, gallery.class);
+        shirtView = findViewById(R.id.imageViewShirt);
+        pantsView = findViewById(R.id.imageViewPants);
+
+        theCollection = findViewById(R.id.thecollection);
+        theCollection.setOnClickListener(v -> {
+            // Combine both shirt and pants images into one list (if needed)
+            List<String> allImages = new ArrayList<>();
+            allImages.addAll(shirtImages);
+            allImages.addAll(pantsImages);
+            // Pass image URLs to GalleryActivity
+            Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
+            intent.putStringArrayListExtra("imageUrls", new ArrayList<>(allImages));
             startActivity(intent);
         });
 
-       // addclothes=findViewById(R.id.addcloths);
-      //  addclothes.setOnClickListener(new View.OnClickListener() {
-           // @Override
-          //  public void onClick(View view) {
-              //  MainActivity.this.itemType = "Shirt";
-              //  Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-              //  addimageActivityResultLauncher.launch(intent);
-           // }
-      //  });
         addshirt=findViewById(R.id.addShirt);
         addshirt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.itemType = "Shirt";
+                MainActivity.this.clothingType = ClothingType.SHIRT;
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 addimageActivityResultLauncher.launch(intent);
             }
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         addpants.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.itemType = "Pants";
+                MainActivity.this.clothingType = ClothingType.PANTS;
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 addimageActivityResultLauncher.launch(intent);
             }
@@ -95,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.pantsArrowLeft).setOnClickListener(v -> changePants(-1));
         findViewById(R.id.pantsArrowRight).setOnClickListener(v -> changePants(1));
         findViewById(R.id.random).setOnClickListener(v -> randomOutfit());
+
+        firebaseManager = new FirebaseManager(this, this);
+        firebaseManager.loadClothingImages();
     }
 
     ActivityResultLauncher<Intent> addimageActivityResultLauncher = registerForActivityResult(
@@ -107,47 +110,60 @@ public class MainActivity extends AppCompatActivity {
                         Intent data = result.getData();
                         if (data != null) {
                             Uri selectedImage = data.getData();
-                            FirebaseManager.getInstance()
-                                    .uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.itemType);
-                        }
+                            firebaseManager.uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.clothingType);
 
+                        }
                     }
                 }
             });
 
     private void changeShirt(int direction) {
-        currentShirtIndex = (currentShirtIndex + direction + shirts.length) % shirts.length;
-        shirt.setImageResource(shirts[currentShirtIndex]);
-        Animation fadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in);
-        shirt.startAnimation(fadeIn);
+        currentShirtIndex = (currentShirtIndex + direction + shirtImages.size()) % shirtImages.size();
+        Glide.with(this).load(shirtImages.get(currentShirtIndex)).into(shirtView);
     }
 
     private void changePants(int direction) {
-
-        currentPantsIndex = (currentPantsIndex + direction + pantsArray.length) % pantsArray.length;
-        pants.setImageResource(pantsArray[currentPantsIndex]);
-        Animation fadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in);
-        pants.startAnimation(fadeIn);
+        currentPantsIndex = (currentPantsIndex + direction + pantsImages.size()) % pantsImages.size();
+        Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
     }
 
     private void randomOutfit() {
-        Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
-        shirt.startAnimation(fadeOut);
-        pants.startAnimation(fadeOut);
+        Random random = new Random();
+        currentShirtIndex = random.nextInt(shirtImages.size());
+        currentPantsIndex = random.nextInt(pantsImages.size());
+        Glide.with(this).load(shirtImages.get(currentShirtIndex)).into(shirtView);
+        Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
+    }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Random random = new Random();
-                currentShirtIndex = random.nextInt(shirts.length);
-                currentPantsIndex = random.nextInt(pantsArray.length);
-                shirt.setImageResource(shirts[currentShirtIndex]);
-                pants.setImageResource(pantsArray[currentPantsIndex]);
-
-                Animation fadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in);
-                shirt.startAnimation(fadeIn);
-                pants.startAnimation(fadeIn);
+    @Override
+    public void onFirstImageLoaded(ClothingType type, String imageUrl) {
+        runOnUiThread(() -> {
+            if (type == ClothingType.SHIRT) {
+                Glide.with(this).load(imageUrl).into(shirtView);
+            } else if (type == ClothingType.PANTS) {
+                Glide.with(this).load(imageUrl).into(pantsView);
             }
-        }, 500); //
+        });
+    }
+
+    @Override
+    public void onAllImagesLoaded(List<String> shirtUrls, List<String> pantsUrls) {
+        // TODO: enable the gallery button only after all the images have been loaded (?)
+        shirtImages = shirtUrls;
+        pantsImages = pantsUrls;
+    }
+    @Override
+    public void addurltolist(ClothingType type, String imageUrl) {
+        runOnUiThread(() -> {
+            if (type == ClothingType.SHIRT) {
+                Glide.with(this).load(imageUrl).into(shirtView);
+                shirtImages.add(imageUrl);
+
+
+            } else if (type == ClothingType.PANTS) {
+                Glide.with(this).load(imageUrl).into(pantsView);
+                pantsImages.add(imageUrl);
+            }
+        });
     }
 }
