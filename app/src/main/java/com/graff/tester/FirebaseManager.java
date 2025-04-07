@@ -21,28 +21,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.bumptech.glide.Glide;
-
 public class FirebaseManager {
-    final private Context context;
     final private FirebaseFirestore db;
-    private boolean firstShirtSent = false;
-    private boolean firstPantsSent = false;
-    final private List<String> shirtImages = new ArrayList<>();
-    final private List<String> pantsImages = new ArrayList<>();
-    final private FirebaseCallback callback;
 
     // Private constructor so no one can instantiate from outside
-    public FirebaseManager(Context context, FirebaseCallback callback) {
-        this.context = context;
+    public FirebaseManager() {
         this.db = FirebaseFirestore.getInstance();
-        this.callback = callback;
     }
 
-    public void loadClothingImages() {
+    public void loadClothingImages(OnFirstImageLoadedCallback firstCallback,
+                                   OnAllImagesLoadedCallback allCallback) {
         db.collection("clothes")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    boolean firstShirtSent = false;
+                    boolean firstPantsSent = false;
+                    List<String> shirtImages = new ArrayList<>();
+                    List<String> pantsImages = new ArrayList<>();
+
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                         String imageUrl = doc.getString("imageUrl");
                         String typeString = doc.getString("type");
@@ -52,33 +48,26 @@ public class FirebaseManager {
                             if (type == ClothingType.SHIRT) {
                                 shirtImages.add(imageUrl);
                                 if (!firstShirtSent) {
-                                    callback.onFirstImageLoaded(ClothingType.SHIRT, imageUrl);
+                                    firstCallback.onFirstImageLoaded(ClothingType.SHIRT, imageUrl);
                                     firstShirtSent = true;
                                 }
                             } else if (type == ClothingType.PANTS) {
                                 pantsImages.add(imageUrl);
                                 if (!firstPantsSent) {
-                                    callback.onFirstImageLoaded(ClothingType.PANTS, imageUrl);
+                                    firstCallback.onFirstImageLoaded(ClothingType.PANTS, imageUrl);
                                     firstPantsSent = true;
                                 }
                             }
                         }
                     }
 
-                    // Send full lists when done
-                    callback.onAllImagesLoaded(shirtImages, pantsImages);
+                    allCallback.onAllImagesLoaded(shirtImages, pantsImages);
                 })
                 .addOnFailureListener(e -> Log.e("Firebase", "Error loading images", e));
     }
 
-    // Preload images into Glide cache
-    private void preloadImages(List<String> imageUrls) {
-        for (String url : imageUrls) {
-            Glide.with(this.context).load(url).preload();
-        }
-    }
-
-    public void uploadImageToFirebase(Context context, Uri imageUri, ClothingType clothingType) {
+    public void uploadImageToFirebase(Context context, Uri imageUri, ClothingType clothingType,
+                                      OnImageUploadedCallback uploadCallback) {
         if (imageUri == null) {
             Toast.makeText(context, "Failed to convert image", Toast.LENGTH_SHORT).show();
             return;
@@ -92,19 +81,17 @@ public class FirebaseManager {
 
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot ->
-                    // Check if file exists before getting download URL
-                    storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
-                        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl = uri.toString();
-                            saveImageToFirestore(context, imageUrl, clothingType);
-                            callback.addurltolist(clothingType, imageUrl);
-
-                        })
-                    ).addOnFailureListener(e ->
-                        Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
-                    )
+                        // Check if file exists before getting download URL
+                        storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
+                                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    String imageUrl = uri.toString();
+                                    saveImageToFirestore(context, imageUrl, clothingType);
+                                    uploadCallback.onImageUploaded(clothingType, imageUrl);
+                                })
+                        ).addOnFailureListener(e ->
+                                Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
+                        )
                 );
-
     }
 
     public void saveImageToFirestore(Context context, String imageUrl, ClothingType clothingType) {
@@ -163,9 +150,16 @@ public class FirebaseManager {
         return (extension != null) ? extension : "";  // Default to empty string if null
     }
 
-    public interface FirebaseCallback {
+    public interface OnFirstImageLoadedCallback {
         void onFirstImageLoaded(ClothingType type, String imageUrl);
-        void onAllImagesLoaded(List<String> shirtImages, List<String> pantsImages);
-        void addurltolist(ClothingType type, String imageUrl);
     }
+
+    public interface OnAllImagesLoadedCallback {
+        void onAllImagesLoaded(List<String> shirtImages, List<String> pantsImages);
+    }
+
+    public interface OnImageUploadedCallback {
+        void onImageUploaded(ClothingType type, String imageUrl);
+    }
+
 }

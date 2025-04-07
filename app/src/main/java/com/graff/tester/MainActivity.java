@@ -35,7 +35,7 @@ import android.animation.ValueAnimator;
 import android.os.Handler;
 
 
-public class MainActivity extends AppCompatActivity implements FirebaseManager.FirebaseCallback {
+public class MainActivity extends AppCompatActivity {
     private ImageView shirtView, pantsView;
     private List<String> shirtImages = new ArrayList<>();
     private List<String> pantsImages = new ArrayList<>();
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
     private ImageButton addshirt;
 	private ImageButton addpants;
     private ClothingType clothingType;
-
     private FirebaseManager firebaseManager;
 
 
@@ -96,23 +95,26 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
         findViewById(R.id.pantsArrowRight).setOnClickListener(v -> changePants(1));
         findViewById(R.id.random).setOnClickListener(v -> randomOutfit());
 
-        firebaseManager = new FirebaseManager(this, this);
-        firebaseManager.loadClothingImages();
+        firebaseManager = new FirebaseManager();
+        firebaseManager.loadClothingImages(
+                this::handleFirstImageLoaded,
+                this::handleAllImagesLoaded
+        );
     }
 
     ActivityResultLauncher<Intent> addimageActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // There are no request codes
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Uri selectedImage = data.getData();
-                            firebaseManager.uploadImageToFirebase(MainActivity.this, selectedImage, MainActivity.this.clothingType);
-
-                        }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Uri selectedImage = data.getData();
+                        firebaseManager.uploadImageToFirebase(
+                                MainActivity.this,
+                                selectedImage,
+                                clothingType,
+                                this::handleImageUploaded
+                        );
                     }
                 }
             });
@@ -135,8 +137,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
         Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
     }
 
-    @Override
-    public void onFirstImageLoaded(ClothingType type, String imageUrl) {
+    private void handleFirstImageLoaded(ClothingType type, String imageUrl) {
         runOnUiThread(() -> {
             if (type == ClothingType.SHIRT) {
                 Glide.with(this).load(imageUrl).into(shirtView);
@@ -146,14 +147,13 @@ public class MainActivity extends AppCompatActivity implements FirebaseManager.F
         });
     }
 
-    @Override
-    public void onAllImagesLoaded(List<String> shirtUrls, List<String> pantsUrls) {
+    private void handleAllImagesLoaded(List<String> shirtUrls, List<String> pantsUrls) {
         // TODO: enable the gallery button only after all the images have been loaded (?)
         shirtImages = shirtUrls;
         pantsImages = pantsUrls;
     }
-    @Override
-    public void addurltolist(ClothingType type, String imageUrl) {
+
+    private void handleImageUploaded(ClothingType type, String imageUrl) {
         runOnUiThread(() -> {
             if (type == ClothingType.SHIRT) {
                 Glide.with(this).load(imageUrl).into(shirtView);

@@ -7,17 +7,19 @@ import android.net.Uri;
 
 import com.graff.tester.models.ClothingType;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
 public class ClothingUtils {
+
+    public interface UploadDrawableCallback {
+        void onUploadSuccess(ClothingType type, String imageUrl);
+    }
+
     public static Uri getImageUriFromDrawable(Context context, int drawableId) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId);
 
-        // Create a unique filename for each image by using the drawable ID
         String fileName = "temp_image_" + drawableId + ".jpg";
         File file = new File(context.getCacheDir(), fileName);  // Use drawableId to ensure uniqueness
 
@@ -33,10 +35,15 @@ public class ClothingUtils {
         return Uri.fromFile(file);
     }
 
-    public static void uploadClothingDrawableToFirebase(Context context, int drawableId, ClothingType clothingType) {
-        Uri imageUri = getImageUriFromDrawable(context, drawableId); // e.g. R.drawable.pants
-        FirebaseManager manager = new FirebaseManager(context, null);
-        manager.uploadImageToFirebase(context, imageUri, clothingType);
+    public static void uploadClothingDrawableToFirebase(Context context, int drawableId, ClothingType clothingType, UploadDrawableCallback callback) {
+        Uri imageUri = getImageUriFromDrawable(context, drawableId);
+        FirebaseManager manager = new FirebaseManager();
+
+        manager.uploadImageToFirebase(context, imageUri, clothingType, (type, imageUrl) -> {
+            if (callback != null) {
+                callback.onUploadSuccess(type, imageUrl);
+            }
+        });
     }
 /*
 
