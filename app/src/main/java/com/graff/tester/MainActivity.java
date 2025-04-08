@@ -58,15 +58,18 @@ public class MainActivity extends AppCompatActivity {
         pantsView = findViewById(R.id.imageViewPants);
 
         theCollection = findViewById(R.id.thecollection);
-        theCollection.setOnClickListener(v -> {
-            // Combine both shirt and pants images into one list (if needed)
-            List<String> allImages = new ArrayList<>();
-            allImages.addAll(shirtImages);
-            allImages.addAll(pantsImages);
-            // Pass image URLs to GalleryActivity
-            Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
-            intent.putStringArrayListExtra("imageUrls", new ArrayList<>(allImages));
-            startActivity(intent);
+        theCollection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Combine both shirt and pants images into one list (if needed)
+                List<String> allImages = new ArrayList<>();
+                allImages.addAll(shirtImages);
+                allImages.addAll(pantsImages);
+                // Pass image URLs to GalleryActivity
+                Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
+                intent.putStringArrayListExtra("imageUrls", new ArrayList<>(allImages));
+                MainActivity.this.startActivity(intent);
+            }
         });
 
         addshirt=findViewById(R.id.addShirt);

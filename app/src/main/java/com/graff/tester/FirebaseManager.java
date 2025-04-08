@@ -38,8 +38,10 @@ public class FirebaseManager {
                     boolean firstPantsSent = false;
                     List<String> shirtImages = new ArrayList<>();
                     List<String> pantsImages = new ArrayList<>();
+                    List<String> allDocuments =  new ArrayList<>();
 
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        allDocuments.add(doc.getId());
                         String imageUrl = doc.getString("imageUrl");
                         String typeString = doc.getString("type");
                         ClothingType type = ClothingType.fromString(typeString);

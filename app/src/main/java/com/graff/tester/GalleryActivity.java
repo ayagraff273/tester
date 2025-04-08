@@ -1,7 +1,9 @@
 package com.graff.tester;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,5 +35,7 @@ public class GalleryActivity extends AppCompatActivity {
 
         adapter = new GalleryAdapter(this, imageUrls);
         recyclerView.setAdapter(adapter);
+
+
     }
 }
