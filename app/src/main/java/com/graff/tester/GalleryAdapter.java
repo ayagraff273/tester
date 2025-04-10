@@ -4,19 +4,30 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private Context context;
     private List<String> imageUrls;  // List of image URLs
+    private FirebaseStorage storage;
+    private FirebaseFirestore db;
+
 
     public GalleryAdapter(Context context, List<String> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;
+        this.storage = FirebaseStorage.getInstance();
+        this.db = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -48,6 +59,24 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         Glide.with(context)
                 .load(imageUrl)
                 .into(holder.imageView);  // Assuming your item layout has an ImageView with this ID
+
+        holder.btnDelete.setOnClickListener(v -> {
+            String imageUrlToDelete = imageUrls.get(position);
+            FirebaseManager firebaseManager = new FirebaseManager();
+            firebaseManager.deleteImage(imageUrlToDelete, new FirebaseManager.OnDeleteImageCallback() {
+                @Override
+                public void onSuccess() {
+                    imageUrls.remove(position);
+                    notifyItemRemoved(position);
+                    Toast.makeText(context, "נמחק בהצלחה", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
     private int dpToPx(int dp) {
@@ -61,10 +90,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        ImageButton btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
+
         }
     }
 }

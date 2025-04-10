@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="WardrobePal "
         android:textSize="45sp"
-        android:textColor="#66005E"
+        android:textColor="#654321"
         android:fontFamily="cursive"
         android:textStyle="bold"
         android:gravity="center"
@@ -44,7 +44,8 @@
         android:layout_height="wrap_content"
         android:text="choose your outfit of the day!"
         android:textSize="20sp"
-        android:textColor="@color/button_color"
+        android:textColor="#012620"
+
         android:fontFamily="serif-monospace"
         android:textStyle="bold"
         android:gravity="center"

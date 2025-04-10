@@ -149,6 +149,32 @@ public class FirebaseManager {
 
         return (extension != null) ? extension : "";  // Default to empty string if null
     }
+    public interface OnDeleteImageCallback {
+        void onSuccess();
+        void onFailure(String errorMessage);
+    }
+    public void deleteImage(String imageUrl, OnDeleteImageCallback callback) {
+        // מחיקת התמונה מה־Storage
+        FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    // אחרי שמחקנו את התמונה, מוצאים את הדוקומנט מה־Firestore ומוחקים אותו
+                    FirebaseFirestore.getInstance().collection("clothes")
+                            .whereEqualTo("imageUrl", imageUrl)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    queryDocumentSnapshots.getDocuments().get(0).getReference().delete()
+                                            .addOnSuccessListener(unused -> callback.onSuccess())
+                                            .addOnFailureListener(e -> callback.onFailure("שגיאה במחיקת הדוקומנט"));
+                                } else {
+                                    callback.onFailure("לא נמצא דוקומנט למחיקה");
+                                }
+                            })
+                            .addOnFailureListener(e -> callback.onFailure("שגיאה בגישה ל־Firestore"));
+                })
+                .addOnFailureListener(e -> callback.onFailure("שגיאה במחיקת התמונה מה־Storage"));
+    }
 
     public interface OnFirstImageLoadedCallback {
         void onFirstImageLoaded(ClothingType type, String imageUrl);
