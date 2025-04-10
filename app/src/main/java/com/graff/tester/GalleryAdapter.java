@@ -8,15 +8,17 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.graff.tester.models.ClothingItem;
+
 import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private final Context context;
-    private final  List<String> imageUrls;  // List of image URLs
+    private final  List<ClothingItem> clothingItems;  // List of image URLs
 
-    public GalleryAdapter(Context context, List<String> imageUrls) {
+    public GalleryAdapter(Context context, List<ClothingItem> clothingItems) {
         this.context = context;
-        this.imageUrls = imageUrls;
+        this.clothingItems = clothingItems;
     }
 
     @NonNull
@@ -43,11 +45,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             holder.itemView.setLayoutParams(params);
         }
 
-        String imageUrl = imageUrls.get(position);
+        ClothingItem clothingItem = clothingItems.get(position);
 
         // Use Glide to load the image URL into the ImageView
         Glide.with(context)
-                .load(imageUrl)
+                .load(clothingItem.getImageUrl())
                 .into(holder.imageView);  // Assuming your item layout has an ImageView with this ID
     }
 
@@ -57,7 +59,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return imageUrls.size();
+        return clothingItems.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

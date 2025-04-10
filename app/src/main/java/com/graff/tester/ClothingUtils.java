@@ -1,9 +1,12 @@
 package com.graff.tester;
 
+import static java.util.logging.Level.INFO;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
 import com.graff.tester.models.ClothingType;
 
@@ -39,10 +42,8 @@ public class ClothingUtils {
         Uri imageUri = getImageUriFromDrawable(context, drawableId);
         FirebaseManager manager = new FirebaseManager();
 
-        manager.uploadImageToFirebase(context, imageUri, clothingType, (type, imageUrl) -> {
-            if (callback != null) {
-                callback.onUploadSuccess(type, imageUrl);
-            }
+        manager.uploadImageToFirebase(context, imageUri, clothingType, (item) -> {
+
         });
     }
 /*

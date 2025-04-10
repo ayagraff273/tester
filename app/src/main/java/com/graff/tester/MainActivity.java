@@ -13,26 +13,30 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.bumptech.glide.Glide;
+import com.graff.tester.models.ClothingItem;
+import com.graff.tester.models.ClothingItemRepository;
 import com.graff.tester.models.ClothingType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
     private ImageView shirtView, pantsView;
-    private List<String> shirtImages = new ArrayList<>();
-    private List<String> pantsImages = new ArrayList<>();
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
     private ClothingType clothingType;
     private FirebaseManager firebaseManager;
 
+    private List<ClothingItem> getShirtRepository() {
+        return ClothingItemRepository.getInstance().getShirtItems();
+    }
+
+    private List<ClothingItem> getPantsRepository() {
+        return ClothingItemRepository.getInstance().getPantsItems();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         shirtView = findViewById(R.id.imageViewShirt);
@@ -40,13 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton theCollection = findViewById(R.id.thecollection);
         theCollection.setOnClickListener(v -> {
-            // Combine both shirt and pants images into one list (if needed)
-            List<String> allImages = new ArrayList<>();
-            allImages.addAll(shirtImages);
-            allImages.addAll(pantsImages);
             // Pass image URLs to GalleryActivity
             Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
-            intent.putStringArrayListExtra("imageUrls", new ArrayList<>(allImages));
             startActivity(intent);
         });
 
@@ -72,8 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseManager = new FirebaseManager();
         firebaseManager.loadClothingImages(
-                this::handleFirstImageLoaded,
-                this::handleAllImagesLoaded
+                this::handleImageLoaded
         );
     }
 
@@ -95,49 +93,45 @@ public class MainActivity extends AppCompatActivity {
             });
 
     private void changeShirt(int direction) {
-        currentShirtIndex = (currentShirtIndex + direction + shirtImages.size()) % shirtImages.size();
-        Glide.with(this).load(shirtImages.get(currentShirtIndex)).into(shirtView);
+        currentShirtIndex = (currentShirtIndex + direction + getShirtRepository().size()) % getShirtRepository().size();
+        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
     }
 
     private void changePants(int direction) {
-        currentPantsIndex = (currentPantsIndex + direction + pantsImages.size()) % pantsImages.size();
-        Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
+        currentPantsIndex = (currentPantsIndex + direction + getPantsRepository().size()) % getPantsRepository().size();
+        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
 
     private void randomOutfit() {
         Random random = new Random();
-        currentShirtIndex = random.nextInt(shirtImages.size());
-        currentPantsIndex = random.nextInt(pantsImages.size());
-        Glide.with(this).load(shirtImages.get(currentShirtIndex)).into(shirtView);
-        Glide.with(this).load(pantsImages.get(currentPantsIndex)).into(pantsView);
+        currentShirtIndex = random.nextInt(getShirtRepository().size());
+        currentPantsIndex = random.nextInt(getPantsRepository().size());
+        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
+        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
 
-    private void handleFirstImageLoaded(ClothingType type, String imageUrl) {
+    private void handleImageLoaded(ClothingItem item) {
         runOnUiThread(() -> {
-            if (type == ClothingType.SHIRT) {
-                Glide.with(this).load(imageUrl).into(shirtView);
-            } else if (type == ClothingType.PANTS) {
-                Glide.with(this).load(imageUrl).into(pantsView);
+            if (item.clothingType == ClothingType.SHIRT) {
+                if (getShirtRepository().isEmpty())
+                    Glide.with(this).load(item.getImageUrl()).into(shirtView);
+                getShirtRepository().add(item);
+            } else if (item.clothingType == ClothingType.PANTS) {
+                if (getPantsRepository().isEmpty())
+                    Glide.with(this).load(item.getImageUrl()).into(pantsView);
+                getPantsRepository().add(item);
             }
         });
     }
 
-    private void handleAllImagesLoaded(List<String> shirtUrls, List<String> pantsUrls) {
-        // TODO: enable the gallery button only after all the images have been loaded (?)
-        shirtImages = shirtUrls;
-        pantsImages = pantsUrls;
-    }
-
-    private void handleImageUploaded(ClothingType type, String imageUrl) {
+    private void handleImageUploaded(ClothingItem item) {
         runOnUiThread(() -> {
-            if (type == ClothingType.SHIRT) {
-                Glide.with(this).load(imageUrl).into(shirtView);
-                shirtImages.add(imageUrl);
-
-
-            } else if (type == ClothingType.PANTS) {
-                Glide.with(this).load(imageUrl).into(pantsView);
-                pantsImages.add(imageUrl);
+            if (item.getClothingType() == ClothingType.SHIRT) {
+                Glide.with(this).load(item.getImageUrl()).into(shirtView);
+                getPantsRepository().add(item);
+            } else if (item.getClothingType() == ClothingType.PANTS) {
+                Glide.with(this).load(item.getImageUrl()).into(pantsView);
+                getPantsRepository().add(item);
             }
         });
     }
