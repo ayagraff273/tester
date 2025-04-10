@@ -1,22 +1,12 @@
 package com.graff.tester;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,13 +16,7 @@ import com.bumptech.glide.Glide;
 import com.graff.tester.models.ClothingType;
 import java.util.ArrayList;
 import java.util.List;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import java.util.Random;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.os.Handler;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,9 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private List<String> pantsImages = new ArrayList<>();
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
-    private ImageButton theCollection;
-    private ImageButton addshirt;
-	private ImageButton addpants;
     private ClothingType clothingType;
     private FirebaseManager firebaseManager;
 
@@ -57,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         shirtView = findViewById(R.id.imageViewShirt);
         pantsView = findViewById(R.id.imageViewPants);
 
-        theCollection = findViewById(R.id.thecollection);
+        ImageButton theCollection = findViewById(R.id.thecollection);
         theCollection.setOnClickListener(v -> {
             // Combine both shirt and pants images into one list (if needed)
             List<String> allImages = new ArrayList<>();
@@ -69,23 +50,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        addshirt=findViewById(R.id.addShirt);
-        addshirt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity.this.clothingType = ClothingType.SHIRT;
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                addimageActivityResultLauncher.launch(intent);
-            }
+        ImageButton add_shirt =findViewById(R.id.addShirt);
+        add_shirt.setOnClickListener(view -> {
+            MainActivity.this.clothingType = ClothingType.SHIRT;
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            addimageActivityResultLauncher.launch(intent);
         });
-        addpants=findViewById(R.id.addPants);
-        addpants.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity.this.clothingType = ClothingType.PANTS;
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                addimageActivityResultLauncher.launch(intent);
-            }
+        ImageButton add_pants =findViewById(R.id.addPants);
+        add_pants.setOnClickListener(view -> {
+            MainActivity.this.clothingType = ClothingType.SHIRT;
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            addimageActivityResultLauncher.launch(intent);
         });
 
 

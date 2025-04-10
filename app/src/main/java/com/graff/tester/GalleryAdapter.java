@@ -11,8 +11,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
-    private Context context;
-    private List<String> imageUrls;  // List of image URLs
+    private final Context context;
+    private final  List<String> imageUrls;  // List of image URLs
 
     public GalleryAdapter(Context context, List<String> imageUrls) {
         this.context = context;
@@ -31,7 +31,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         // Calculate card size dynamically
         int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
         int columns = 3; // same as your GridLayoutManager
-        int spacing = dpToPx(16); // adjust based on margins (4dp each side * 2 or more)
+        int dp = 16;
+        int spacing = dpToPx(dp); // adjust based on margins (4dp each side * 2 or more)
         int size = (screenWidth / columns) - spacing;
 
         // Set itemView's width and height to make it square
