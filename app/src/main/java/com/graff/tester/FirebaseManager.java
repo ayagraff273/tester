@@ -9,6 +9,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -26,6 +27,21 @@ public class FirebaseManager {
     // Private constructor so no one can instantiate from outside
     public FirebaseManager() {
         this.db = FirebaseFirestore.getInstance();
+    }
+
+    public void addUser(String email, String password, OnUserAddedCallback onUserAddedCallback) {
+        FirebaseAuth.getInstance()
+                .createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Signup success → go back to MainActivity
+                        onUserAddedCallback.onUserAdded();
+                    } else {
+                        // Show error
+                        Log.w("Firebase", "Error adding user");
+                    }
+                });
+
     }
 
     public void loadClothingImages(OnHandleItemLoadedCallback callback) {
@@ -139,17 +155,15 @@ public class FirebaseManager {
     public void deleteItem(ClothingItem item, OnDeleteItemCallback callback) {
         FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageUrl())
                 .delete()
-                .addOnSuccessListener(aVoid -> {
-                    item.docRef.delete()
-                            .addOnSuccessListener(a -> {
-                                // Successfully deleted the document
-                                callback.onDeleteItem(item);
-                            })
-                            .addOnFailureListener(e -> {
-                                // Handle the error
-                                Log.w("Firebase", "Error deleting document", e);
-                            });
-                })
+                .addOnSuccessListener(aVoid -> item.docRef.delete()
+                        .addOnSuccessListener(a -> {
+                            // Successfully deleted the document
+                            callback.onDeleteItem(item);
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle the error
+                            Log.w("Firebase", "Error deleting document", e);
+                        }))
                 .addOnFailureListener(e -> {
                     // Handle the error deleting the image
                     Log.w("Firebase", "Error deleting image", e);
@@ -167,6 +181,10 @@ public class FirebaseManager {
 
     public interface OnImageUploadedCallback {
         void onImageUploaded(ClothingItem item);
+    }
+
+    public interface OnUserAddedCallback {
+        void onUserAdded();
     }
 
 }

@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.graff.tester.models.ClothingItem;
 import com.graff.tester.models.ClothingItemRepository;
 import com.graff.tester.models.ClothingType;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentPantsIndex = 0;
     private ClothingType clothingType;
     private FirebaseManager firebaseManager;
+    private FirebaseUser currentUser;
 
     private List<ClothingItem> getShirtRepository() {
         return ClothingItemRepository.getInstance().getShirtItems();
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        validateCurrentUser();
+
         setContentView(R.layout.activity_main);
         shirtView = findViewById(R.id.imageViewShirt);
         pantsView = findViewById(R.id.imageViewPants);
@@ -75,9 +81,19 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    private void validateCurrentUser() {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) { // Redirect to login
+            Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        validateCurrentUser();
         // In case items were deleted
         if (currentShirtIndex >= getShirtRepository().size()) {
              currentShirtIndex = 0;
