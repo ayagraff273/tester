@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import com.graff.tester.models.ClothingItem;
 import com.graff.tester.models.ClothingType;
 
 import java.io.File;
@@ -15,10 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ClothingUtils {
-
-    public interface UploadDrawableCallback {
-        void onUploadSuccess(ClothingType type, String imageUrl);
-    }
 
     public static Uri getImageUriFromDrawable(Context context, int drawableId) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId);
@@ -38,13 +35,10 @@ public class ClothingUtils {
         return Uri.fromFile(file);
     }
 
-    public static void uploadClothingDrawableToFirebase(Context context, int drawableId, ClothingType clothingType, UploadDrawableCallback callback) {
+    public static void uploadClothingDrawableToFirebase(Context context, int drawableId, ClothingType clothingType, FirebaseManager.OnImageUploadedCallback callback) {
         Uri imageUri = getImageUriFromDrawable(context, drawableId);
         FirebaseManager manager = new FirebaseManager();
-
-        manager.uploadImageToFirebase(context, imageUri, clothingType, (item) -> {
-
-        });
+        manager.uploadImageToFirebase(context, imageUri, clothingType, callback);
     }
 /*
 

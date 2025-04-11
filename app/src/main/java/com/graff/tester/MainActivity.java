@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.random).setOnClickListener(v -> randomOutfit());
 
         firebaseManager = new FirebaseManager();
-        firebaseManager.loadClothingImages(
-                this::handleImageLoaded
+        firebaseManager.downloadClothingImages(
+                this::handleImageLoaded, this::onHandleItemsDownloadCompleted
         );
     }
 
@@ -149,6 +149,21 @@ public class MainActivity extends AppCompatActivity {
                 ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
+    }
+
+    private void onHandleItemsDownloadCompleted() {
+        if (this.getShirtRepository().isEmpty()) {
+            ClothingUtils.uploadClothingDrawableToFirebase(MainActivity.this,
+                    R.drawable.shirt2,
+                    ClothingType.SHIRT,
+                    this::handleImageUploaded);
+        }
+        if (this.getPantsRepository().isEmpty()) {
+            ClothingUtils.uploadClothingDrawableToFirebase(MainActivity.this,
+                    R.drawable.pants2,
+                    ClothingType.PANTS,
+                    this::handleImageUploaded);
+        }
     }
 
     private void handleImageUploaded(ClothingItem item) {

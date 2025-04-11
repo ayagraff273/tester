@@ -51,7 +51,8 @@ public class FirebaseManager {
         FirebaseAuth.getInstance().signOut();
     }
 
-    public void loadClothingImages(OnHandleItemLoadedCallback callback) {
+    public void downloadClothingImages(OnHandleItemDownloadedCallback callback,
+                                       OnHandleItemsDownloadCompletedCallback completedCallback) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             Log.w("Firebase", "No Logged-in User");
@@ -73,10 +74,12 @@ public class FirebaseManager {
                                     imageUrl,
                                     clothingType
                             );
-
-                            callback.onHandleItemLoaded(item);
+                            if (callback != null)
+                                callback.onHandleItemDownloaded(item);
                         }
                     }
+                    if (completedCallback != null)
+                        completedCallback.onHandleItemsDownloadCompleted();
                 })
                 .addOnFailureListener(e -> Log.e("Firebase", "Error loading images", e));
     }
@@ -203,8 +206,12 @@ public class FirebaseManager {
         void onDeleteItem(ClothingItem item);
     }
 
-    public interface OnHandleItemLoadedCallback {
-        void onHandleItemLoaded(ClothingItem item);
+    public interface OnHandleItemDownloadedCallback {
+        void onHandleItemDownloaded(ClothingItem item);
+    }
+
+    public interface OnHandleItemsDownloadCompletedCallback {
+        void onHandleItemsDownloadCompleted();
     }
 
     public interface OnImageUploadedCallback {

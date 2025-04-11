@@ -57,6 +57,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                 .into(holder.imageView);  // Assuming your item layout has an ImageView with this ID
 
         holder.btnDelete.setOnClickListener(v -> {
+            // TODO: do not delete the last pants/shirt
             ClothingItem item = clothingItems.get(position);
             FirebaseManager firebaseManager = new FirebaseManager();
             firebaseManager.deleteItem(item, item1 -> {
