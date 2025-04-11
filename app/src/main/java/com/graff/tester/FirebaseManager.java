@@ -9,6 +9,8 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -28,8 +30,37 @@ public class FirebaseManager {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public void loadClothingImages(OnHandleItemLoadedCallback callback) {
-        db.collection("clothes")
+    public void createUser(String email, String password, OnUserAddedCallback onUserAddedCallback) {
+        FirebaseAuth.getInstance()
+                .createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Signup success → go back to MainActivity
+                        onUserAddedCallback.onUserAddedSuccessfully();
+                    } else {
+                        Exception e = task.getException();
+                        String errorMessage = (e != null) ? e.getMessage() : "Signup failed.";
+                        Log.w("Firebase", "Signup error", e);
+                        onUserAddedCallback.onUserAdditionFailed(errorMessage);
+                    }
+                });
+
+    }
+
+    public void signOut() {
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    public void downloadClothingImages(OnHandleItemDownloadedCallback callback,
+                                       OnHandleItemsDownloadCompletedCallback completedCallback) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("Firebase", "No Logged-in User");
+            return;
+        }
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("clothes")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -43,10 +74,12 @@ public class FirebaseManager {
                                     imageUrl,
                                     clothingType
                             );
-
-                            callback.onHandleItemLoaded(item);
+                            if (callback != null)
+                                callback.onHandleItemDownloaded(item);
                         }
                     }
+                    if (completedCallback != null)
+                        completedCallback.onHandleItemsDownloadCompleted();
                 })
                 .addOnFailureListener(e -> Log.e("Firebase", "Error loading images", e));
     }
@@ -55,6 +88,12 @@ public class FirebaseManager {
                                       OnImageUploadedCallback uploadCallback) {
         if (imageUri == null) {
             Toast.makeText(context, "Failed to convert image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("Firebase", "No Logged-in User");
             return;
         }
 
@@ -81,6 +120,11 @@ public class FirebaseManager {
     private void saveImageToFirestore(Context context, String imageUrl, ClothingType clothingType,
                                      OnImageUploadedCallback uploadCallback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("Firebase", "No Logged-in User");
+            return;
+        }
 
         Map<String, Object> clothingItem = new HashMap<>();
         clothingItem.put("imageUrl", imageUrl);
@@ -92,7 +136,10 @@ public class FirebaseManager {
         String uniqueId = UUID.randomUUID().toString();  // Generates a unique ID for each image
         clothingItem.put("uniqueId", uniqueId);  // Store unique ID in Firestore
 
-        db.collection("clothes").add(clothingItem)
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("clothes")
+                .add(clothingItem)
                 .addOnSuccessListener(documentReference -> {
                     ClothingItem item = new ClothingItem(documentReference, imageUrl, clothingType);
                     uploadCallback.onImageUploaded(item);
@@ -139,17 +186,15 @@ public class FirebaseManager {
     public void deleteItem(ClothingItem item, OnDeleteItemCallback callback) {
         FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageUrl())
                 .delete()
-                .addOnSuccessListener(aVoid -> {
-                    item.docRef.delete()
-                            .addOnSuccessListener(a -> {
-                                // Successfully deleted the document
-                                callback.onDeleteItem(item);
-                            })
-                            .addOnFailureListener(e -> {
-                                // Handle the error
-                                Log.w("Firebase", "Error deleting document", e);
-                            });
-                })
+                .addOnSuccessListener(aVoid -> item.docRef.delete()
+                        .addOnSuccessListener(a -> {
+                            // Successfully deleted the document
+                            callback.onDeleteItem(item);
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle the error
+                            Log.w("Firebase", "Error deleting document", e);
+                        }))
                 .addOnFailureListener(e -> {
                     // Handle the error deleting the image
                     Log.w("Firebase", "Error deleting image", e);
@@ -161,12 +206,21 @@ public class FirebaseManager {
         void onDeleteItem(ClothingItem item);
     }
 
-    public interface OnHandleItemLoadedCallback {
-        void onHandleItemLoaded(ClothingItem item);
+    public interface OnHandleItemDownloadedCallback {
+        void onHandleItemDownloaded(ClothingItem item);
+    }
+
+    public interface OnHandleItemsDownloadCompletedCallback {
+        void onHandleItemsDownloadCompleted();
     }
 
     public interface OnImageUploadedCallback {
         void onImageUploaded(ClothingItem item);
+    }
+
+    public interface OnUserAddedCallback {
+        void onUserAddedSuccessfully();
+        void onUserAdditionFailed(String errorMessage);
     }
 
 }

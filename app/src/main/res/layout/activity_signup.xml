@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="20dp"
+    android:id="@+id/signup"
     android:background="#FB9FC8"
 
     >
