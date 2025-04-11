@@ -30,7 +30,7 @@ public class FirebaseManager {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public void addUser(String email, String password, OnUserAddedCallback onUserAddedCallback) {
+    public void createUser(String email, String password, OnUserAddedCallback onUserAddedCallback) {
         FirebaseAuth.getInstance()
                 .createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -45,6 +45,10 @@ public class FirebaseManager {
                     }
                 });
 
+    }
+
+    public void signOut() {
+        FirebaseAuth.getInstance().signOut();
     }
 
     public void loadClothingImages(OnHandleItemLoadedCallback callback) {

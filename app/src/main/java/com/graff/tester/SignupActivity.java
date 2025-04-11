@@ -33,7 +33,7 @@ public class SignupActivity extends AppCompatActivity {
             String password = textPsw.getText().toString();
             FirebaseManager manager = new FirebaseManager();
             if (!email.isEmpty() && !password.isEmpty()) {
-                manager.addUser(email, password, new FirebaseManager.OnUserAddedCallback() {
+                manager.createUser(email, password, new FirebaseManager.OnUserAddedCallback() {
                     @Override
                     public void onUserAddedSuccessfully() {
                         onUserAdded();
