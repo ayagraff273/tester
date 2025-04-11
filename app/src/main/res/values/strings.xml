@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">tester</string>
+    <string name="hint_email">דואר אלקטרוני</string>
+    <string name="login">התחברות</string>
+    <string name="password">סיסמא</string>
+    <string name="login_button">התחבר</string>
 </resources>
