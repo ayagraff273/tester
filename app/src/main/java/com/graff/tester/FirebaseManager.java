@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -47,7 +48,14 @@ public class FirebaseManager {
     }
 
     public void loadClothingImages(OnHandleItemLoadedCallback callback) {
-        db.collection("clothes")
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("Firebase", "No Logged-in User");
+            return;
+        }
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("clothes")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -76,6 +84,12 @@ public class FirebaseManager {
             return;
         }
 
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("Firebase", "No Logged-in User");
+            return;
+        }
+
         String fileExtension = getFileExtension(context, imageUri);
         String uniqueId = UUID.randomUUID().toString();  // Generates a unique ID for each image
 
@@ -99,6 +113,11 @@ public class FirebaseManager {
     private void saveImageToFirestore(Context context, String imageUrl, ClothingType clothingType,
                                      OnImageUploadedCallback uploadCallback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("Firebase", "No Logged-in User");
+            return;
+        }
 
         Map<String, Object> clothingItem = new HashMap<>();
         clothingItem.put("imageUrl", imageUrl);
@@ -110,7 +129,10 @@ public class FirebaseManager {
         String uniqueId = UUID.randomUUID().toString();  // Generates a unique ID for each image
         clothingItem.put("uniqueId", uniqueId);  // Store unique ID in Firestore
 
-        db.collection("clothes").add(clothingItem)
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("clothes")
+                .add(clothingItem)
                 .addOnSuccessListener(documentReference -> {
                     ClothingItem item = new ClothingItem(documentReference, imageUrl, clothingType);
                     uploadCallback.onImageUploaded(item);

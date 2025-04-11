@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         });
         ImageButton add_pants =findViewById(R.id.addPants);
         add_pants.setOnClickListener(view -> {
-            MainActivity.this.clothingType = ClothingType.SHIRT;
+            MainActivity.this.clothingType = ClothingType.PANTS;
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             addimageActivityResultLauncher.launch(intent);
         });
@@ -142,11 +142,11 @@ public class MainActivity extends AppCompatActivity {
             if (item.clothingType == ClothingType.SHIRT) {
                 if (getShirtRepository().isEmpty())
                     Glide.with(this).load(item.getImageUrl()).into(shirtView);
-                getShirtRepository().add(item);
+                ClothingItemRepository.getInstance().addShirtItem(item);
             } else if (item.clothingType == ClothingType.PANTS) {
                 if (getPantsRepository().isEmpty())
                     Glide.with(this).load(item.getImageUrl()).into(pantsView);
-                getPantsRepository().add(item);
+                ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
     }
@@ -155,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             if (item.getClothingType() == ClothingType.SHIRT) {
                 Glide.with(this).load(item.getImageUrl()).into(shirtView);
-                getPantsRepository().add(item);
+                ClothingItemRepository.getInstance().addShirtItem(item);
             } else if (item.getClothingType() == ClothingType.PANTS) {
                 Glide.with(this).load(item.getImageUrl()).into(pantsView);
-                getPantsRepository().add(item);
+                ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
     }
