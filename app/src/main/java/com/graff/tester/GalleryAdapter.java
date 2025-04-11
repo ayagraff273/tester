@@ -4,11 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.graff.tester.models.ClothingItem;
+import com.graff.tester.models.ClothingItemRepository;
 
 import java.util.List;
 
@@ -51,6 +55,17 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         Glide.with(context)
                 .load(clothingItem.getImageUrl())
                 .into(holder.imageView);  // Assuming your item layout has an ImageView with this ID
+
+        holder.btnDelete.setOnClickListener(v -> {
+            ClothingItem item = clothingItems.get(position);
+            FirebaseManager firebaseManager = new FirebaseManager();
+            firebaseManager.deleteItem(item, item1 -> {
+                ClothingItemRepository.getInstance().removeItem(clothingItem);
+                clothingItems.remove(position);
+                notifyItemRemoved(position);
+                Toast.makeText(context, "Deleted Successfully!", Toast.LENGTH_SHORT).show();
+            });
+        });
     }
 
     private int dpToPx(int dp) {
@@ -64,10 +79,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        ImageButton btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }

@@ -45,6 +45,15 @@ public class ClothingItemRepository {
         pantsItems.add(item);
     }
 
+    public void removeItem(ClothingItem item) {
+        if (item.clothingType == ClothingType.PANTS) {
+            this.pantsItems.remove(item);
+        }
+        else if (item.clothingType == ClothingType.SHIRT) {
+            this.shirtItems.remove(item);
+        }
+    }
+
     // Set the shirt items list
     public void setShirtItems(List<ClothingItem> shirtItems) {
         this.shirtItems = shirtItems;

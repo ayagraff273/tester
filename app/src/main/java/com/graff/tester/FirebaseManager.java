@@ -136,6 +136,31 @@ public class FirebaseManager {
         return (extension != null) ? extension : "";  // Default to empty string if null
     }
 
+    public void deleteItem(ClothingItem item, OnDeleteItemCallback callback) {
+        FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageUrl())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    item.docRef.delete()
+                            .addOnSuccessListener(a -> {
+                                // Successfully deleted the document
+                                callback.onDeleteItem(item);
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle the error
+                                Log.w("Firebase", "Error deleting document", e);
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the error deleting the image
+                    Log.w("Firebase", "Error deleting image", e);
+                });
+    }
+
+
+    public interface OnDeleteItemCallback {
+        void onDeleteItem(ClothingItem item);
+    }
+
     public interface OnHandleItemLoadedCallback {
         void onHandleItemLoaded(ClothingItem item);
     }

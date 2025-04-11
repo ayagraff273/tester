@@ -75,6 +75,18 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // In case items were deleted
+        if (currentShirtIndex >= getShirtRepository().size()) {
+             currentShirtIndex = 0;
+        }
+        if (currentPantsIndex >= getPantsRepository().size()) {
+            currentPantsIndex = 0;
+        }
+    }
+
     ActivityResultLauncher<Intent> addimageActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {

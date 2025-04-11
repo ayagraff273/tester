@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="WardrobePal "
         android:textSize="45sp"
-        android:textColor="#66005E"
+        android:textColor="#654321"
         android:fontFamily="cursive"
         android:textStyle="bold"
         android:gravity="center"
@@ -44,7 +44,8 @@
         android:layout_height="wrap_content"
         android:text="choose your outfit of the day!"
         android:textSize="20sp"
-        android:textColor="@color/button_color"
+        android:textColor="#012620"
+
         android:fontFamily="serif-monospace"
         android:textStyle="bold"
         android:gravity="center"
@@ -95,16 +96,16 @@
         app:layout_constraintEnd_toStartOf="@id/imageViewShirt"
         android:layout_marginEnd="8dp" />
 
- <ImageView
-     android:id="@+id/shirtArrowRight"
-     android:layout_width="40dp"
-     android:layout_height="40dp"
-     android:layout_marginStart="8dp"
-     android:contentDescription="חץ ימינה עבור חולצה"
-     android:src="@drawable/arrow_right"
-     app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
-     app:layout_constraintStart_toEndOf="@id/imageViewShirt"
-     app:layout_constraintTop_toTopOf="@id/imageViewShirt" />
+    <ImageView
+        android:id="@+id/shirtArrowRight"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="חץ ימינה עבור חולצה"
+        android:src="@drawable/arrow_right"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
+        app:layout_constraintStart_toEndOf="@id/imageViewShirt"
+        app:layout_constraintTop_toTopOf="@id/imageViewShirt" />
 
 
 
