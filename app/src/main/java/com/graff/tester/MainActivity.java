@@ -84,9 +84,8 @@ public class MainActivity extends AppCompatActivity {
     private void validateCurrentUser() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) { // Redirect to login
-            Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
             startActivity(intent);
-            finish();
         }
     }
 

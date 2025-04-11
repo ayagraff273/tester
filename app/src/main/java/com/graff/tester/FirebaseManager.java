@@ -35,10 +35,12 @@ public class FirebaseManager {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         // Signup success → go back to MainActivity
-                        onUserAddedCallback.onUserAdded();
+                        onUserAddedCallback.onUserAddedSuccessfully();
                     } else {
-                        // Show error
-                        Log.w("Firebase", "Error adding user");
+                        Exception e = task.getException();
+                        String errorMessage = (e != null) ? e.getMessage() : "Signup failed.";
+                        Log.w("Firebase", "Signup error", e);
+                        onUserAddedCallback.onUserAdditionFailed(errorMessage);
                     }
                 });
 
@@ -184,7 +186,8 @@ public class FirebaseManager {
     }
 
     public interface OnUserAddedCallback {
-        void onUserAdded();
+        void onUserAddedSuccessfully();
+        void onUserAdditionFailed(String errorMessage);
     }
 
 }
