@@ -46,6 +46,22 @@ public class FirebaseManager {
                 });
 
     }
+    public void loginUser(String email, String password, OnLoginCallback callback) {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onLoginSuccess();
+                    } else {
+                        callback.onLoginFailed(task.getException().getMessage());
+                    }
+                });
+    }
+
+    public interface OnLoginCallback {
+        void onLoginSuccess();
+        void onLoginFailed(String errorMessage);
+    }
+
 
     public void signOut() {
         FirebaseAuth.getInstance().signOut();
@@ -142,7 +158,9 @@ public class FirebaseManager {
                 .add(clothingItem)
                 .addOnSuccessListener(documentReference -> {
                     ClothingItem item = new ClothingItem(documentReference, imageUrl, clothingType);
+                    if (uploadCallback != null){
                     uploadCallback.onImageUploaded(item);
+                    }
                 })
                 .addOnFailureListener(e ->
                     Toast.makeText(context, "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show()
@@ -188,8 +206,10 @@ public class FirebaseManager {
                 .delete()
                 .addOnSuccessListener(aVoid -> item.docRef.delete()
                         .addOnSuccessListener(a -> {
-                            // Successfully deleted the document
-                            callback.onDeleteItem(item);
+                            if(callback != null) {
+                                // Successfully deleted the document
+                                callback.onDeleteItem(item);
+                            }
                         })
                         .addOnFailureListener(e -> {
                             // Handle the error
