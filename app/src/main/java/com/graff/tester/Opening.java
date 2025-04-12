@@ -4,21 +4,18 @@ package com.graff.tester;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Opening extends AppCompatActivity {
-    private Button loginButton;
-    private Button registerButton;
     private ImageView shirtImage;
     private ImageView pantsImage;
-    private int[] shirtImages = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.shirt3};
-    private int[] pantsImages={R.drawable.pants2,R.drawable.pants, R.drawable.pants4};
+    private final int[] shirtImages = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.shirt3};
+    private final int[] pantsImages={R.drawable.pants2,R.drawable.pants, R.drawable.pants4};
     private int currentIndex = 0;
-    private Handler handler = new Handler();
-    private Runnable outfitSwitcher = new Runnable() {
+    private final Handler handler = new Handler();
+    private final Runnable outfitSwitcher = new Runnable() {
         @Override
         public void run() {
             currentIndex = (currentIndex + 1) % shirtImages.length;
@@ -35,26 +32,20 @@ public class Opening extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loginButton = findViewById(R.id.loginButton);
-        registerButton = findViewById(R.id.registerButton);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button registerButton = findViewById(R.id.registerButton);
         shirtImage = findViewById(R.id.shirtImage);
         pantsImage = findViewById(R.id.pantsImage);
         shirtImage.setImageResource(shirtImages[currentIndex]);
         pantsImage.setImageResource(pantsImages[currentIndex]);
         handler.postDelayed(outfitSwitcher, 2000);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Opening.this, LoginActivity.class);
-                startActivity(intent);
-            }
+        loginButton.setOnClickListener(view -> {
+            Intent intent = new Intent(Opening.this, LoginActivity.class);
+            startActivity(intent);
         });
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Opening.this, SignupActivity.class);
-                startActivity(intent);
-            }
+        registerButton.setOnClickListener(view -> {
+            Intent intent = new Intent(Opening.this, SignupActivity.class);
+            startActivity(intent);
         });
 
     }
