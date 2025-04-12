@@ -6,7 +6,9 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@color/background_color"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:id="@+id/opening"
+    >
 
 
     <TextView
@@ -21,8 +23,8 @@
     <ImageView
         android:id="@+id/shirtImage"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:src="@drawable/shirt1"
+        android:layout_height="65dp"
+        android:src="@drawable/shirt_bg"
         android:scaleType="fitCenter"
         android:layout_marginBottom="4dp"
 
@@ -33,7 +35,7 @@
         android:id="@+id/pantsImage"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:src="@drawable/sample_pants"
+        android:src="@drawable/pants_bg5"
         android:scaleType="fitCenter"
         android:layout_marginBottom="8dp"
         />
@@ -69,3 +71,4 @@
         android:padding="12dp" />
 
 </LinearLayout>
+

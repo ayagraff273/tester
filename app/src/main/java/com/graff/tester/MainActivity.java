@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.menu_logout) {
                     FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    startActivity(new Intent(MainActivity.this, Opening.class));
                     finish();
                     return true;
                 }
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     private void validateCurrentUser() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) { // Redirect to login
-            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+            Intent intent = new Intent(MainActivity.this,Opening.class);
             startActivity(intent);
         }
     }

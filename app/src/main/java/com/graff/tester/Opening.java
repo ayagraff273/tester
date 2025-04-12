@@ -9,36 +9,54 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Opening extends AppCompatActivity {
-    private ImageView shirtImage;
-    private ImageView pantsImage;
-    private final int[] shirtImages = {R.drawable.shirt1, R.drawable.shirt2, R.drawable.shirt3};
-    private final int[] pantsImages={R.drawable.pants2,R.drawable.pants, R.drawable.pants4};
-    private int currentIndex = 0;
-    private final Handler handler = new Handler();
-    private final Runnable outfitSwitcher = new Runnable() {
-        @Override
-        public void run() {
-            currentIndex = (currentIndex + 1) % shirtImages.length;
-
-            shirtImage.setImageResource(shirtImages[currentIndex]);
-            pantsImage.setImageResource(pantsImages[currentIndex]);
-
-            handler.postDelayed(this, 2000);
-        }
+    private ImageView shirtImage, pantsImage;
+    private int[] shirtImages = {
+            R.drawable.shirt_bg,
+            R.drawable.shirt_bg2,
+            R.drawable.shirt_bg4,
+            R.drawable.shirt_bg5,
+            R.drawable.shirt_bg6
     };
 
+    private int[] pantsImages = {
+            R.drawable.pants_bg2,
+            R.drawable.pants_bg3,
+            R.drawable.pants_bg4,
+            R.drawable.pants_bg5
+    };
+
+
+    private int shirtIndex = 0;
+    private int pantsIndex = 0;
+
+    private Handler handler = new Handler();
+    private final long delay = 800; // זמן בין תחלופה במילישניות
+
+    private Runnable changeImagesRunnable = new Runnable() {
+        @Override
+        public void run() {
+            shirtImage.setImageResource(shirtImages[shirtIndex]);
+            pantsImage.setImageResource(pantsImages[pantsIndex]);
+
+            shirtIndex = (shirtIndex + 1) % shirtImages.length;
+            pantsIndex = (pantsIndex + 1) % pantsImages.length;
+
+            handler.postDelayed(this, delay);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_opening);
 
-        Button loginButton = findViewById(R.id.loginButton);
-        Button registerButton = findViewById(R.id.registerButton);
         shirtImage = findViewById(R.id.shirtImage);
         pantsImage = findViewById(R.id.pantsImage);
-        shirtImage.setImageResource(shirtImages[currentIndex]);
-        pantsImage.setImageResource(pantsImages[currentIndex]);
-        handler.postDelayed(outfitSwitcher, 2000);
+
+        handler.post(changeImagesRunnable);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button registerButton = findViewById(R.id.registerButton);
+
         loginButton.setOnClickListener(view -> {
             Intent intent = new Intent(Opening.this, LoginActivity.class);
             startActivity(intent);
@@ -49,9 +67,10 @@ public class Opening extends AppCompatActivity {
         });
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(outfitSwitcher);
+        handler.removeCallbacks(changeImagesRunnable);
     }
 }
