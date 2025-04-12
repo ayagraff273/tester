@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MenuInflater;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-
+import com.graff.tester.R;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,12 +51,36 @@ public class MainActivity extends AppCompatActivity {
         shirtView = findViewById(R.id.imageViewShirt);
         pantsView = findViewById(R.id.imageViewPants);
 
-        ImageButton theCollection = findViewById(R.id.thecollection);
-        theCollection.setOnClickListener(v -> {
-            // Pass image URLs to GalleryActivity
-            Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
-            startActivity(intent);
+        ImageButton menuButton = findViewById(R.id.menuButton);
+        menuButton.setOnClickListener(view -> {
+            PopupMenu popup = new PopupMenu(MainActivity.this, view);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.main_menu, popup.getMenu());
+
+            popup.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.menu_gallery) {
+                    startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                    return true;
+                } else if (itemId == R.id.menu_about) {
+                    startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                    return true;
+                } else if (itemId == R.id.menu_logout) {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                    return true;
+                }
+
+                return false;
+            });
+
+            // הצגת התפריט
+            popup.show();
         });
+
+
 
         ImageButton add_shirt =findViewById(R.id.addShirt);
         add_shirt.setOnClickListener(view -> {
