@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.graff.tester.models.ClothingItem;
 import com.graff.tester.models.ClothingItemRepository;
+import com.graff.tester.models.ClothingType;
 
 import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private final Context context;
-    private final  List<ClothingItem> clothingItems;  // List of image URLs
+    private final List<ClothingItem> clothingItems;  // List of image URLs
 
     public GalleryAdapter(Context context, List<ClothingItem> clothingItems) {
         this.context = context;
@@ -57,8 +58,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                 .into(holder.imageView);  // Assuming your item layout has an ImageView with this ID
 
         holder.btnDelete.setOnClickListener(v -> {
-            // TODO: do not delete the last pants/shirt
             ClothingItem item = clothingItems.get(position);
+            if (!holder.canRemoveFromList(item)) {
+                Toast.makeText(context, "You must have at least 2 "+item.getClothingType()+"s'!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             FirebaseManager firebaseManager = new FirebaseManager();
             firebaseManager.deleteItem(item, item1 -> {
                 ClothingItemRepository.getInstance().removeItem(clothingItem);
@@ -87,6 +91,21 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             imageView = itemView.findViewById(R.id.imageView);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
+
+        public boolean canRemoveFromList(ClothingItem item) {
+            List<ClothingItem> shirts=ClothingItemRepository.getInstance().getShirtItems();
+            List<ClothingItem> pants=ClothingItemRepository.getInstance().getPantsItems();
+            ClothingType clothingType = item.getClothingType();
+            if(clothingType==ClothingType.SHIRT && shirts.size()<=2){
+                return false;
+            }
+            else if(clothingType==ClothingType.PANTS && pants.size()<=2){
+                return false;
+            }
+            return true;
+            }
+
+        }
     }
-}
+
 

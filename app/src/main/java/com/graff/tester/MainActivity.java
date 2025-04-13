@@ -68,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.menu_logout) {
                     FirebaseAuth.getInstance().signOut();
+                    ClothingItemRepository.getInstance().clearShirtItems();
+                    ClothingItemRepository.getInstance().clearPantsItems();
+
+                    //getShirtRepository().removeAll(getShirtRepository());
+                    //getPantsRepository().removeAll(getPantsRepository());
                     startActivity(new Intent(MainActivity.this, Opening.class));
                     finish();
                     return true;
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void validateCurrentUser() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) { // Redirect to login
+        if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this,Opening.class);
             startActivity(intent);
         }
