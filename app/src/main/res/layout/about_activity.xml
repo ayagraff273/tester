@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/about_activity"
     android:background="#FAFAFA">
 
     <LinearLayout
@@ -45,12 +46,21 @@
         </LinearLayout>
 
             <Button
+                android:id="@+id/contactButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:text="צור קשר">
 
             </Button>
+<Button
+    android:id="@+id/btnBack"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:background="@drawable/back_home"
+>
+
+</Button>
 
     </LinearLayout>
 
