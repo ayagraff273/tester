@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Opening extends AppCompatActivity {
     private ImageView shirtImage, pantsImage;
-    private int[] shirtImages = {
+    private final int[] shirtImages = {
             R.drawable.shirt_bg,
             R.drawable.shirt_bg2,
             R.drawable.shirt_bg4,
@@ -18,7 +18,7 @@ public class Opening extends AppCompatActivity {
             R.drawable.shirt_bg6
     };
 
-    private int[] pantsImages = {
+    private final int[] pantsImages = {
             R.drawable.pants_bg2,
             R.drawable.pants_bg3,
             R.drawable.pants_bg4,
@@ -29,10 +29,9 @@ public class Opening extends AppCompatActivity {
     private int shirtIndex = 0;
     private int pantsIndex = 0;
 
-    private Handler handler = new Handler();
-    private final long delay = 800; // זמן בין תחלופה במילישניות
+    private final Handler handler = new Handler();
 
-    private Runnable changeImagesRunnable = new Runnable() {
+    private final Runnable changeImagesRunnable = new Runnable() {
         @Override
         public void run() {
             shirtImage.setImageResource(shirtImages[shirtIndex]);
@@ -41,6 +40,7 @@ public class Opening extends AppCompatActivity {
             shirtIndex = (shirtIndex + 1) % shirtImages.length;
             pantsIndex = (pantsIndex + 1) % pantsImages.length;
 
+            long delay = 800;
             handler.postDelayed(this, delay);
         }
     };

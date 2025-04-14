@@ -99,11 +99,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             if(clothingType==ClothingType.SHIRT && shirts.size()<=2){
                 return false;
             }
-            else if(clothingType==ClothingType.PANTS && pants.size()<=2){
-                return false;
-            }
-            return true;
-            }
+            else return clothingType != ClothingType.PANTS || pants.size() > 2;
+        }
 
         }
     }

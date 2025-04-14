@@ -52,10 +52,14 @@ public class FirebaseManager {
                     if (task.isSuccessful()) {
                         callback.onLoginSuccess();
                     } else {
-                        callback.onLoginFailed(task.getException().getMessage());
+                        String errorMessage = (task.getException() != null)
+                                ? task.getException().getMessage()
+                                : "Unknown error occurred";
+                        callback.onLoginFailed(errorMessage);
                     }
                 });
     }
+
 
     public interface OnLoginCallback {
         void onLoginSuccess();

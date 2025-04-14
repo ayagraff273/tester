@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private int currentPantsIndex = 0;
     private ClothingType clothingType;
     private FirebaseManager firebaseManager;
-    private FirebaseUser currentUser;
     private static final int CAMERA_REQUEST_CODE = 100;
     private Uri cameraImageUri;
 
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void validateCurrentUser() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this,Opening.class);
             startActivity(intent);

@@ -23,30 +23,6 @@
         android:layout_marginBottom="20dp" />
 
     <EditText
-        android:id="@+id/fullname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="שם מלא"
-        android:textSize="18sp"
-        android:layout_marginBottom="15dp"
-        android:padding="10dp"
-        android:background="@drawable/input_field_bg"
-
-        android:inputType="textPersonName" />
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="שם משתמש"
-        android:textSize="18sp"
-        android:layout_marginBottom="15dp"
-        android:padding="10dp"
-        android:background="@drawable/input_field_bg"
-
-        android:inputType="text" />
-
-
-    <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
