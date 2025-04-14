@@ -18,31 +18,32 @@ public class AboutActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Button btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> {
-            finish();
-        });
-        Button contactButton = findViewById(R.id.contactButton);
-        contactButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                emailIntent.setData(Uri.parse("graffaya@gmail.com"));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "פנייה דרך האפליקציה");
-
-                if (emailIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(emailIntent);
-                }
-            }
-        });
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.about_activity);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.about_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Button btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
+
+        Button contactButton = findViewById(R.id.contactButton);
+
+    contactButton.setOnClickListener(v -> {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:graffaya@gmail.com"));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "פנייה דרך האפליקציה");
+
+        if (emailIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(emailIntent);
+        }
+    });
+
     }
 }
