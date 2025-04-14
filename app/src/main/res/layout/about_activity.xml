@@ -1,68 +1,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/about_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/about_activity"
-    android:background="#FAFAFA">
+    android:background="#FAFAFA"
+    android:orientation="vertical">
 
+    <!-- תמונה בראש הדף -->
+    <ImageView
+        android:id="@+id/header_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:contentDescription="@string/messy_clothes_clueless"
+        android:scaleType="centerCrop"
+        android:src="@drawable/messy"
+        tools:ignore="ImageContrastCheck" />
+
+    <!-- תוכן -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <!-- תמונה בראש הדף -->
-        <ImageView
-            android:id="@+id/header_image"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/messy" /> <!-- את כבר שמרת את הקובץ בשם הזה -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/aboutTheApp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:layout_marginBottom="12dp" />
 
-        <!-- תוכן -->
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="על האפליקציה"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="האפליקציה הזו נולדה מתוך אהבה לאופנה ורצון לעשות סדר בארון – תרתי משמע. הרעיון פשוט: לעזור לך לבחור בגדים בקלות,ולנהל את הארון הדיגיטלי האישי שלך.\n\nאני איה גרף, תלמידת מגמת הנדסת תוכנה, בניתי את האפליקציה הזו בתור פרויקט גמר. תמיד רציתי פתרון פשוט ומהנה לבחירת בגדים, אז החלטתי ליצור אחד בעצמי.\n\nיש לך רעיון לשיפור? נתקלת בבאג? או סתם בא לך לפרגן? אני כאן!"
-                android:textSize="16sp"
-                android:textColor="#555555"
-                android:lineSpacingExtra="4dp" />
-
-        </LinearLayout>
-
-            <Button
-                android:id="@+id/contactButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:text="צור קשר">
-
-            </Button>
-<Button
-    android:id="@+id/btnBack"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:background="@drawable/back_home"
->
-
-</Button>
-
+            android:text="@string/contentAbout"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:lineSpacingExtra="4dp"
+            tools:ignore="VisualLintLongText" />
     </LinearLayout>
 
+    <!-- כפתור צור קשר -->
+    <Button
+        android:id="@+id/contactButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/contact" />
 
-    </LinearLayout>
+    <!-- כפתור חזרה -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/back_home"
+        android:contentDescription="@string/return_to_home_page" />
+
+</LinearLayout>

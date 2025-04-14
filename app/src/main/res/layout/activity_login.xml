@@ -63,7 +63,7 @@
         android:id="@+id/signupRedirect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="48dp"
         android:clickable="true"
         android:gravity="center"
         android:text="אין לך חשבון? הירשם"

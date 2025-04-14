@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,10 +13,9 @@
     >
 
     <TextView
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="הרשמה"
+        android:text="@string/registration"
         android:textSize="40sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -26,45 +26,54 @@
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="דואר אלקטרוני"
-        android:textSize="18sp"
         android:layout_marginBottom="15dp"
-        android:padding="10dp"
+        android:autofillHints="emailAddress"
         android:background="@drawable/input_field_bg"
-
-        android:inputType="textEmailAddress" />
+        android:hint="@string/gmail"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textColorHint="@color/black"
+        android:textSize="18sp"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="סיסמא"
-        android:textSize="18sp"
         android:layout_marginBottom="25dp"
-        android:padding="10dp"
+        android:autofillHints="password"
         android:background="@drawable/input_field_bg"
-
-        android:inputType="textPassword" />
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textColorHint="#333333"
+        android:textSize="18sp"
+        tools:ignore="VisualLintTextFieldSize" />
 
 
     <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="הרשמה"
+        android:text="@string/registration"
         android:textSize="18sp"
         android:textColor="@color/white"
+        android:contentDescription="@string/register_button"
         android:backgroundTint="@color/button_color"
-        android:padding="12dp" />
+        android:padding="12dp"
+        tools:ignore="VisualLintButtonSize" />
 
     <TextView
         android:id="@+id/loginRedirect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="כבר יש לך חשבון? התחבר"
-        android:textSize="16sp"
-        android:textColor="@color/button_color"
-        android:gravity="center"
         android:layout_marginTop="20dp"
-        android:clickable="true" />
+        android:clickable="true"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:text="@string/login_redirect"
+        android:textColor="@color/button_color"
+        android:textSize="16sp" />
 </LinearLayout>

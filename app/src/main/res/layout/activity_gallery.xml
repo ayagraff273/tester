@@ -6,27 +6,28 @@
     android:padding="8dp">
     <Button
         android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:textSize="16sp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/back_home"
+        android:contentDescription="@string/back"
+
         android:backgroundTint="#66005E"
         android:textColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/galleryHeadline"
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
         android:fontFamily="cursive"
         android:gravity="center"
         android:paddingBottom="10dp"
-        android:text="the closet"
+        android:text="@string/the_closet"
         android:textColor="#66005E"
         android:textSize="45sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:contentDescription="@string/your_gallery"
         android:id="@+id/recyclerView_gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
