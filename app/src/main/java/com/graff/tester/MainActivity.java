@@ -1,7 +1,10 @@
 package com.graff.tester;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -9,10 +12,14 @@ import android.view.MenuInflater;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-
+import android.widget.Toast;
+import android.Manifest;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private ClothingType clothingType;
     private FirebaseManager firebaseManager;
     private FirebaseUser currentUser;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private Uri cameraImageUri;
+
 
     private List<ClothingItem> getShirtRepository() {
         return ClothingItemRepository.getInstance().getShirtItems();
@@ -69,9 +79,6 @@ public class MainActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().signOut();
                     ClothingItemRepository.getInstance().clearShirtItems();
                     ClothingItemRepository.getInstance().clearPantsItems();
-
-                    //getShirtRepository().removeAll(getShirtRepository());
-                    //getPantsRepository().removeAll(getPantsRepository());
                     startActivity(new Intent(MainActivity.this, Opening.class));
                     finish();
                     return true;
@@ -80,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             });
 
-            // הצגת התפריט
             popup.show();
         });
 
@@ -89,14 +95,35 @@ public class MainActivity extends AppCompatActivity {
         ImageButton add_shirt =findViewById(R.id.addShirt);
         add_shirt.setOnClickListener(view -> {
             MainActivity.this.clothingType = ClothingType.SHIRT;
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            addimageActivityResultLauncher.launch(intent);
+            String[] options = {"צלם תמונה", "בחר מהגלריה"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("בחר אפשרות");
+            builder.setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    checkCameraPermissionAndOpen();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    addimageActivityResultLauncher.launch(intent);
+                }
+            });
+            builder.show();
         });
+
         ImageButton add_pants =findViewById(R.id.addPants);
         add_pants.setOnClickListener(view -> {
             MainActivity.this.clothingType = ClothingType.PANTS;
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            addimageActivityResultLauncher.launch(intent);
+            String[] options = {"צלם תמונה", "בחר מהגלריה"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("בחר אפשרות");
+            builder.setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    checkCameraPermissionAndOpen();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    addimageActivityResultLauncher.launch(intent);
+                }
+            });
+            builder.show();
         });
 
 
@@ -132,6 +159,38 @@ public class MainActivity extends AppCompatActivity {
             currentPantsIndex = 0;
         }
     }
+    private void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+        cameraImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
+        cameraLauncher.launch(cameraIntent);
+    }
+
+    private void checkCameraPermissionAndOpen() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+        } else {
+            openCamera();
+        }
+    }
+
+    ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    firebaseManager.uploadImageToFirebase(
+                            MainActivity.this,
+                            cameraImageUri,
+                            clothingType,
+                            this::handleImageUploaded
+                    );
+                }
+            });
 
     ActivityResultLauncher<Intent> addimageActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -149,6 +208,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "כדי להשתמש במצלמה, צריך לאשר הרשאה", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     private void changeShirt(int direction) {
         currentShirtIndex = (currentShirtIndex + direction + getShirtRepository().size()) % getShirtRepository().size();
