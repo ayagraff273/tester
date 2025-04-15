@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, AboutActivity.class));
                     return true;
                 } else if (itemId == R.id.menu_logout) {
+                    firebaseManager.signOut();
                     FirebaseAuth.getInstance().signOut();
                     ClothingItemRepository.getInstance().clearShirtItems();
                     ClothingItemRepository.getInstance().clearPantsItems();

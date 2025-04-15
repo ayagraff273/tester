@@ -1,7 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_gallery"
-        android:title="הגלריה שלי" />
+        android:title="ארון הבגדים"
+        />
+
     <item
         android:id="@+id/menu_about"
         android:title="אודות האפליקציה" />

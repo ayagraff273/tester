@@ -169,6 +169,39 @@
         app:layout_constraintEnd_toEndOf="@id/imageViewPants"
         app:layout_constraintTop_toTopOf="@id/imageViewPants"
         tools:ignore="TouchTargetSizeCheck" />
+    <ImageView
+        android:id="@+id/imageViewShoes"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/shoes"
+        android:contentDescription="@string/shoes"
+        app:layout_constraintTop_toBottomOf="@id/imageViewPants"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_background"
+        android:elevation="10dp" />
+    <ImageView
+        android:id="@+id/shoesArrowRight"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/arrow_right"
+        android:contentDescription="@string/right_arrow_shoes"
+        app:layout_constraintTop_toTopOf="@id/imageViewShoes"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewShoes"
+        app:layout_constraintStart_toEndOf="@id/imageViewShoes"
+        android:layout_marginStart="8dp" />
+
+    <ImageView
+        android:id="@+id/shoesArrowLeft"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/arrow_left"
+        android:contentDescription="@string/left_arrow_shoes"
+        app:layout_constraintTop_toTopOf="@id/imageViewShoes"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewShoes"
+        app:layout_constraintEnd_toStartOf="@id/imageViewShoes"
+        android:layout_marginEnd="8dp" />
 
 
 
