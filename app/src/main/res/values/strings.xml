@@ -14,7 +14,7 @@
     <string name="your_gallery">גלריית הבגדים שלי</string>
     <string name="registration">הרשמה</string>
     <string name="gmail">דואר אלקטרוני</string>
-    <string name="register_button">כפתור הרשמה לחשבון</string>
+    <string name="register_button">הירשם</string>
     <string name="login_redirect">כבר יש לך חשבון? התחבר</string>
     <string name="welcome">ברוכים הבאים!</string>
     <string name="signin_or_signup">אנא התחברו או הירשמו כדי להמשיך</string>

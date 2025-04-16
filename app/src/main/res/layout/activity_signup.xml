@@ -1,75 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/background_color"
     android:gravity="center"
-    android:padding="20dp"
+    android:orientation="vertical"
+    android:backgroundTint="#FB9FC8"
     android:id="@+id/signup"
-    android:background="#FB9FC8"
-
-    >
+    android:padding="20dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/registration"
-        android:textSize="40sp"
-        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:text="@string/registration"
         android:textColor="@color/button_color"
-        android:layout_marginBottom="20dp" />
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
 
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:autofillHints="emailAddress"
-        android:background="@drawable/input_field_bg"
-        android:hint="@string/gmail"
+        android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
         android:padding="10dp"
-        android:textColorHint="@color/black"
+        android:background="@drawable/input_field_bg"
         android:textSize="18sp"
-        tools:ignore="VisualLintTextFieldSize" />
+        android:textColor="@android:color/black"
+        />
+
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
-        android:autofillHints="password"
         android:background="@drawable/input_field_bg"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:minHeight="48dp"
         android:padding="10dp"
-        android:textColorHint="#333333"
-        android:textSize="18sp"
-        tools:ignore="VisualLintTextFieldSize" />
-
+        android:textColorHint="#757575"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/registration"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:contentDescription="@string/register_button"
         android:backgroundTint="@color/button_color"
-        android:padding="12dp"
-        tools:ignore="VisualLintButtonSize" />
+        android:padding="14dp"
+        android:text="@string/register_button"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
 
     <TextView
         android:id="@+id/loginRedirect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="48dp"
         android:clickable="true"
         android:gravity="center"
         android:minHeight="48dp"
@@ -77,3 +71,4 @@
         android:textColor="@color/button_color"
         android:textSize="16sp" />
 </LinearLayout>
+

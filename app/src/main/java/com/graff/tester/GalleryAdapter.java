@@ -1,5 +1,6 @@
 package com.graff.tester;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,18 +60,28 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
         holder.btnDelete.setOnClickListener(v -> {
             ClothingItem item = clothingItems.get(position);
+
             if (!holder.canRemoveFromList(item)) {
-                Toast.makeText(context, "You must have at least 2 "+item.getClothingType()+"s'!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "You must have at least 2 " + item.getClothingType() + "s!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            FirebaseManager firebaseManager = new FirebaseManager();
-            firebaseManager.deleteItem(item, item1 -> {
-                ClothingItemRepository.getInstance().removeItem(clothingItem);
-                clothingItems.remove(position);
-                notifyItemRemoved(position);
-                Toast.makeText(context, "Deleted Successfully!", Toast.LENGTH_SHORT).show();
-            });
+
+            new AlertDialog.Builder(context)
+                    .setTitle("מחיקת פריט לבוש")
+                    .setMessage("את/ה בטוח/ה שאת/ה רוצה למחוק את הפריט הזה?")
+                    .setPositiveButton("כן", (dialog, which) -> {
+                        FirebaseManager firebaseManager = new FirebaseManager();
+                        firebaseManager.deleteItem(item, item1 -> {
+                            ClothingItemRepository.getInstance().removeItem(item);
+                            clothingItems.remove(position);
+                            notifyItemRemoved(position);
+                            Toast.makeText(context, "Deleted Successfully!", Toast.LENGTH_SHORT).show();
+                        });
+                    })
+                    .setNegativeButton("ביטול", (dialog, which) -> dialog.dismiss())
+                    .show();
         });
+
     }
 
     private int dpToPx(int dp) {
