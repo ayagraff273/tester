@@ -8,6 +8,11 @@
         android:id="@+id/menu_about"
         android:title="אודות האפליקציה" />
     <item
+        android:id="@+id/menu_reminder"
+        android:title="תזכורת יומית"
+        android:icon="@drawable/bell"
+        />
+    <item
         android:id="@+id/menu_logout"
         android:title="התנתקות" />
 </menu>

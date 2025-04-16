@@ -34,7 +34,7 @@ class com.graff.tester.GalleryAdapter {
 
 class com.graff.tester.GalleryAdapter$ViewHolder {
 ~ ImageView imageView
-~ ImageButton btnDelete
+~ ImageButton btnDe  lete
 + <<Create>> ViewHolder(View)
 + boolean canRemoveFromList(ClothingItem)
 }

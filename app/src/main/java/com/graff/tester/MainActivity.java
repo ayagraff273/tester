@@ -1,13 +1,21 @@
 package com.graff.tester;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,6 +37,8 @@ import com.graff.tester.models.ClothingItemRepository;
 import com.graff.tester.models.ClothingType;
 import java.util.List;
 import java.util.Random;
+import java.util.Calendar;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseManager firebaseManager;
     private static final int CAMERA_REQUEST_CODE = 100;
     private Uri cameraImageUri;
+    private static final int NOTIFICATION_PERMISSION_CODE = 1;
+
 
 
     private List<ClothingItem> getShirtRepository() {
@@ -52,13 +64,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         validateCurrentUser();
 
         setContentView(R.layout.activity_main);
         shirtView = findViewById(R.id.imageViewShirt);
         pantsView = findViewById(R.id.imageViewPants);
-
         ImageButton menuButton = findViewById(R.id.menuButton);
         menuButton.setOnClickListener(view -> {
             PopupMenu popup = new PopupMenu(MainActivity.this, view);
@@ -74,7 +84,19 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.menu_about) {
                     startActivity(new Intent(MainActivity.this, AboutActivity.class));
                     return true;
-                } else if (itemId == R.id.menu_logout) {
+                } else if (itemId == R.id.menu_reminder) {
+
+                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                    boolean alarmSet = prefs.getBoolean("alarmSet", false);
+                    if (alarmSet) {
+                        Toast.makeText(MainActivity.this, "תזכורת יומית כבר מופעלת", Toast.LENGTH_SHORT).show();
+                    } else {
+                        checkNotificationPermission();
+                    }
+
+                    return true;
+                }
+                else if (itemId == R.id.menu_logout) {
                     firebaseManager.signOut();
                     FirebaseAuth.getInstance().signOut();
                     ClothingItemRepository.getInstance().clearShirtItems();
@@ -137,7 +159,74 @@ public class MainActivity extends AppCompatActivity {
         firebaseManager.downloadClothingImages(
                 this::handleImageLoaded, this::onHandleItemsDownloadCompleted
         );
+
+
+
     }
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.d("PermissionCheck", "אין הרשאה, מציג דיאלוג");
+
+                new AlertDialog.Builder(this)
+                        .setTitle("דרוש אישור לשליחת התראות")
+                        .setMessage("כדי לקבל תזכורות יומיות, יש לאשר שליחת התראות.")
+                        .setPositiveButton("העבר להגדרות", (dialog, which) -> openNotificationSettings())
+                        .setNegativeButton("ביטול", null)
+                        .show();
+            } else {
+                setDailyReminder();
+            }
+        } else {
+         setDailyReminder();
+        }
+    }
+
+
+    private void setDailyReminder() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(this, ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        calendar.set(Calendar.HOUR_OF_DAY, 7);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+        );
+
+        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("alarmSet", true);
+        editor.apply();
+
+    }
+
+    private void createNotificationChannel() {
+        CharSequence name = "DailyReminderChannel";
+        String description = "Channel for daily outfit reminder";
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel("notifyCh", name, importance);
+        channel.setDescription(description);
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+
+
 
     private void validateCurrentUser() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -146,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
 
     @Override
     protected void onResume() {
@@ -219,9 +309,24 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "כדי להשתמש במצלמה, צריך לאשר הרשאה", Toast.LENGTH_SHORT).show();
             }
         }
+        else if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "הרשאת התראות אושרה", Toast.LENGTH_SHORT).show();
+                setDailyReminder();
+            } else {
+                Toast.makeText(this, "לא ניתן לשלוח התראות בלי אישור", Toast.LENGTH_LONG).show();
+                openNotificationSettings();
+            }
+        }
     }
 
 
+    private void openNotificationSettings() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+        startActivity(intent);
+    }
     private void changeShirt(int direction) {
         currentShirtIndex = (currentShirtIndex + direction + getShirtRepository().size()) % getShirtRepository().size();
         Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
