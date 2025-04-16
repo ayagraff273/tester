@@ -7,9 +7,14 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,7 +46,7 @@ import java.util.Calendar;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private ImageView shirtView, pantsView;
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
@@ -51,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
     private Uri cameraImageUri;
     private static final int NOTIFICATION_PERMISSION_CODE = 1;
 
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+
+    private static final float SHAKE_THRESHOLD = 12.0f;
+    private static final int SHAKE_WAIT_TIME_MS = 500;
+    private long lastShakeTime = 0;
 
 
     private List<ClothingItem> getShirtRepository() {
@@ -91,7 +102,9 @@ public class MainActivity extends AppCompatActivity {
                     if (alarmSet) {
                         Toast.makeText(MainActivity.this, "תזכורת יומית כבר מופעלת", Toast.LENGTH_SHORT).show();
                     } else {
+
                         checkNotificationPermission();
+                        createNotificationChannel();
                     }
 
                     return true;
@@ -161,7 +174,10 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        }
     }
     private void checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -248,7 +264,16 @@ public class MainActivity extends AppCompatActivity {
         if (currentPantsIndex >= getPantsRepository().size()) {
             currentPantsIndex = 0;
         }
+        if (accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        }
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
     private void openCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
@@ -385,4 +410,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER) return;
+
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
+
+        double acceleration = Math.sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH;
+
+        if (acceleration > SHAKE_THRESHOLD) {
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - lastShakeTime > SHAKE_WAIT_TIME_MS) {
+                lastShakeTime = currentTime;
+                randomOutfit();
+            }
+        }
+    }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
 }
