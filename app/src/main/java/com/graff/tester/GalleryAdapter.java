@@ -20,8 +20,7 @@ import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private final Context context;
-    private final List<ClothingItem> clothingItems;  // List of image URLs
-
+    private final List<ClothingItem> clothingItems;
     public GalleryAdapter(Context context, List<ClothingItem> clothingItems) {
         this.context = context;
         this.clothingItems = clothingItems;

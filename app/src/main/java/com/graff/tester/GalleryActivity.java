@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity {
-    final private List<ClothingItem> clothingItems = new ArrayList<>();  // List of URLs for images
+    final private List<ClothingItem> clothingItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

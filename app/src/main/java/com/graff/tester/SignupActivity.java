@@ -28,8 +28,8 @@ public class SignupActivity extends AppCompatActivity {
 
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(v -> {
-            EditText text = findViewById(R.id.editTextEmail);
-            String email = text.getText().toString();
+            EditText textemail = findViewById(R.id.editTextEmail);
+            String email = textemail.getText().toString();
             EditText textPsw = findViewById(R.id.editTextPassword);
             String password = textPsw.getText().toString();
             FirebaseManager manager = new FirebaseManager();

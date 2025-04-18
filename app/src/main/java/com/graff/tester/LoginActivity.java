@@ -20,8 +20,8 @@ public class LoginActivity extends AppCompatActivity {
         TextView redirect = findViewById(R.id.signupRedirect);
         Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener(v -> {
-                    EditText text = findViewById(R.id.editTextEmail);
-                    String email = text.getText().toString();
+                    EditText textemail = findViewById(R.id.editTextEmail);
+                    String email = textemail.getText().toString();
                     EditText textPsw = findViewById(R.id.editTextPassword);
                     String password = textPsw.getText().toString();
                     FirebaseManager manager = new FirebaseManager();
