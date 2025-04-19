@@ -54,15 +54,7 @@ public class ClothingItemRepository {
         }
     }
 
-    // Set the shirt items list
-    public void setShirtItems(List<ClothingItem> shirtItems) {
-        this.shirtItems = shirtItems;
-    }
 
-    // Set the pants items list
-    public void setPantsItems(List<ClothingItem> pantsItems) {
-        this.pantsItems = pantsItems;
-    }
 
     // Clear shirt items list
     public void clearShirtItems() {

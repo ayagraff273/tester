@@ -36,5 +36,10 @@
     <string name="left_arrow_shoes">חץ שמאלה עבור נעליים</string>
     <string name="right_arrow_shoes">חץ ימינה עבור נעליים</string>
     <string name="random_clothes">ערבוב בגדים</string>
-    <string name="daily_reminder">🔔 הפעל תזכורות יומיות</string>
+    <string name="daily_reminder"> daily reminder 🔔</string>
+    <string name="log_out">log out</string>
+    <string name="about_the_app">about the app</string>
+    <string name="delete">מחק פריט</string>
+    <string name="item">item</string>
+    <string name="signup_redirect">אין לך חשבון? הירשם</string>
 </resources>

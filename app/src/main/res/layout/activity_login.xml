@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
+        android:autofillHints="emailAddress"
         android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
@@ -39,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
+        android:autofillHints="password"
         android:background="@drawable/input_field_bg"
         android:hint="@string/password"
         android:inputType="textPassword"
@@ -66,7 +68,7 @@
         android:layout_marginTop="48dp"
         android:clickable="true"
         android:gravity="center"
-        android:text="אין לך חשבון? הירשם"
+        android:text="@string/signup_redirect"
         android:textColor="@color/button_color"
         android:textSize="16sp" />
 </LinearLayout>

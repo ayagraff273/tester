@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="4dp">
@@ -9,18 +10,19 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/item"
         android:scaleType="fitCenter"
         />
+
     <ImageButton
         android:id="@+id/btnDelete"
-        android:elevation="5dp"
         android:layout_width="25dp"
         android:layout_height="25dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/delete"
+        android:elevation="5dp"
         android:scaleType="fitCenter"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:src="@drawable/trash"
-    android:contentDescription="מחק פריט"
-    android:background="?android:attr/selectableItemBackground" />
+        tools:ignore="TouchTargetSizeCheck" />
 
 </FrameLayout>
