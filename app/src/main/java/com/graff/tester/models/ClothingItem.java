@@ -6,11 +6,14 @@ public class ClothingItem {
     public DocumentReference docRef;
     public String imageUrl;
     public ClothingType clothingType;
+    public String description;
 
-    public ClothingItem(DocumentReference docRef, String imageUrl, ClothingType clothingType) {
+    public ClothingItem(DocumentReference docRef, String imageUrl, ClothingType clothingType,
+                        String description) {
         this.docRef = docRef;
         this.imageUrl = imageUrl;
         this.clothingType = clothingType;
+        this.description = description;
     }
 
     public DocumentReference getDocRef() {
@@ -23,5 +26,9 @@ public class ClothingItem {
 
     public ClothingType getClothingType() {
         return clothingType;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

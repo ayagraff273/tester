@@ -8,6 +8,11 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,19 +20,32 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.firebase.vertexai.FirebaseVertexAI;
+import com.google.firebase.vertexai.GenerativeModel;
+import com.google.firebase.vertexai.java.GenerativeModelFutures;
+import com.google.firebase.vertexai.type.Content;
+import com.google.firebase.vertexai.type.GenerateContentResponse;
 import com.graff.tester.models.ClothingItem;
 import com.graff.tester.models.ClothingType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class FirebaseManager implements DatabaseManager {
     final private FirebaseFirestore db;
+    final private GenerativeModel model;
 
     // Private constructor so no one can instantiate from outside
     public FirebaseManager() {
         this.db = FirebaseFirestore.getInstance();
+        // Initialize the Vertex AI service and create a `GenerativeModel` instance
+        // Specify a model that supports your use case
+        this.model = FirebaseVertexAI.getInstance().generativeModel("gemini-2.0-flash");
     }
 
     @Override
@@ -91,12 +109,14 @@ public class FirebaseManager implements DatabaseManager {
                         String imageUrl = doc.getString("imageUrl");
                         String typeString = doc.getString("type");
                         ClothingType clothingType = ClothingType.fromString(typeString);
+                        String description =  doc.contains("description") ? doc.getString("description") : "No description available";
 
                         if (imageUrl != null && clothingType != null) {
                             ClothingItem item = new ClothingItem(
                                     doc.getReference(),
                                     imageUrl,
-                                    clothingType
+                                    clothingType,
+                                    description
                             );
                             if (callback != null)
                                 callback.onHandleItemDownloaded(item);
@@ -129,21 +149,66 @@ public class FirebaseManager implements DatabaseManager {
                 .getReference("clothes/" + uniqueId + "." + fileExtension);
 
         storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot ->
-                        // Check if file exists before getting download URL
-                        storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
-                                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                    String imageUrl = uri.toString();
-                                    saveImageToFirestore(context, imageUrl, clothingType, uploadCallback);
-                                })
-                        ).addOnFailureListener(e ->
-                                Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
-                        )
-                );
+                .addOnSuccessListener(taskSnapshot -> {
+
+                    generateAIDescription(taskSnapshot, new OnDescriptionGeneratedCallback() {
+                        @Override
+                        public void onDescriptionGenerated(String description) {
+                            // Check if file exists before getting download URL
+                            storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
+                                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                        String imageUrl = uri.toString();
+                                        saveImageToFirestore(context, imageUrl, clothingType, description, uploadCallback);
+                                    })
+                            ).addOnFailureListener(e ->
+                                    Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
+                            );
+                        }
+                    });
+                });
     }
 
+    private void generateAIDescription(UploadTask.TaskSnapshot taskSnapshot, OnDescriptionGeneratedCallback callback) {
+        String promptText = "You are a professional fashion stylist and wardrobe consultant. Please provide a concise yet rich description...";
+
+        String mimeType = Objects.requireNonNull(taskSnapshot.getMetadata()).getContentType();
+        String bucket = taskSnapshot.getMetadata().getBucket();
+        String filePath = taskSnapshot.getMetadata().getPath();
+
+        if (mimeType != null && bucket != null) {
+            String storageUrl = "gs://" + bucket + "/" + filePath;
+
+            Content prompt = new Content.Builder()
+                    .addFileData(storageUrl, mimeType)
+                    .addText(promptText)
+                    .build();
+
+            Executor executor = Executors.newSingleThreadExecutor();
+            GenerativeModelFutures modelFutures = GenerativeModelFutures.from(this.model);
+            ListenableFuture<GenerateContentResponse> response = modelFutures.generateContent(prompt);
+
+            Futures.addCallback(response, new FutureCallback<>() {
+                @Override
+                public void onSuccess(GenerateContentResponse result) {
+                    String resultText = result.getText();
+                    callback.onDescriptionGenerated(resultText);
+                }
+
+                @Override
+                public void onFailure(@NonNull Throwable t) {
+                    Log.w("Firebase", "Failed to generate description: " + t.toString());
+                    callback.onDescriptionGenerated("Please fill description here.");
+                }
+            }, executor);
+        } else {
+            Log.w("Firebase", "Missing MIME type or storage info");
+            callback.onDescriptionGenerated("Please fill description here.");
+        }
+    }
+
+
     private void saveImageToFirestore(Context context, String imageUrl, ClothingType clothingType,
-                                     OnImageUploadedCallback uploadCallback) {
+                                     String description, OnImageUploadedCallback uploadCallback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -154,6 +219,7 @@ public class FirebaseManager implements DatabaseManager {
         Map<String, Object> clothingItem = new HashMap<>();
         clothingItem.put("imageUrl", imageUrl);
         clothingItem.put("type", clothingType.toString());
+        clothingItem.put("description", description);
         // using Firestore Timestamp
         Timestamp ts = Timestamp.now();
         clothingItem.put("createdAt", ts);
@@ -166,7 +232,7 @@ public class FirebaseManager implements DatabaseManager {
                 .collection("clothes")
                 .add(clothingItem)
                 .addOnSuccessListener(documentReference -> {
-                    ClothingItem item = new ClothingItem(documentReference, imageUrl, clothingType);
+                    ClothingItem item = new ClothingItem(documentReference, imageUrl, clothingType, description);
                     if (uploadCallback != null){
                     uploadCallback.onImageUploaded(item);
                     }
@@ -229,5 +295,9 @@ public class FirebaseManager implements DatabaseManager {
                     // Handle the error deleting the image
                     Log.w("Firebase", "Error deleting image", e);
                 });
+    }
+
+    public interface OnDescriptionGeneratedCallback {
+        void onDescriptionGenerated(String description);
     }
 }
