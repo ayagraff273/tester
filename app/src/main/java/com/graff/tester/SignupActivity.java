@@ -32,9 +32,9 @@ public class SignupActivity extends AppCompatActivity {
             String email = textemail.getText().toString();
             EditText textPsw = findViewById(R.id.editTextPassword);
             String password = textPsw.getText().toString();
-            FirebaseManager manager = new FirebaseManager();
+            DatabaseManager manager = DataManagerFactory.getDataManager();
             if (!email.isEmpty() && !password.isEmpty()) {
-                manager.createUser(email, password, new FirebaseManager.OnUserAddedCallback() {
+                manager.createUser(email, password, new DatabaseManager.OnUserAddedCallback() {
                     @Override
                     public void onUserAddedSuccessfully() {
                         onUserAdded();

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class FirebaseManager {
+public class FirebaseManager implements DatabaseManager {
     final private FirebaseFirestore db;
 
     // Private constructor so no one can instantiate from outside
@@ -30,6 +30,7 @@ public class FirebaseManager {
         this.db = FirebaseFirestore.getInstance();
     }
 
+    @Override
     public void createUser(String email, String password, OnUserAddedCallback onUserAddedCallback) {
         FirebaseAuth.getInstance()
                 .createUserWithEmailAndPassword(email, password)
@@ -46,6 +47,8 @@ public class FirebaseManager {
                 });
 
     }
+
+    @Override
     public void loginUser(String email, String password, OnLoginCallback callback) {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -60,17 +63,18 @@ public class FirebaseManager {
                 });
     }
 
-
-    public interface OnLoginCallback {
-        void onLoginSuccess();
-        void onLoginFailed(String errorMessage);
+    @Override
+    public boolean isUserLoggedIn() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        return (currentUser != null);
     }
 
-
+    @Override
     public void signOut() {
         FirebaseAuth.getInstance().signOut();
     }
 
+    @Override
     public void downloadClothingImages(OnHandleItemDownloadedCallback callback,
                                        OnHandleItemsDownloadCompletedCallback completedCallback) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -104,7 +108,8 @@ public class FirebaseManager {
                 .addOnFailureListener(e -> Log.e("Firebase", "Error loading images", e));
     }
 
-    public void uploadImageToFirebase(Context context, Uri imageUri, ClothingType clothingType,
+    @Override
+    public void uploadImageToDatabase(Context context, Uri imageUri, ClothingType clothingType,
                                       OnImageUploadedCallback uploadCallback) {
         if (imageUri == null) {
             Toast.makeText(context, "Failed to convert image", Toast.LENGTH_SHORT).show();
@@ -205,6 +210,7 @@ public class FirebaseManager {
         return (extension != null) ? extension : "";  // Default to empty string if null
     }
 
+    @Override
     public void deleteItem(ClothingItem item, OnDeleteItemCallback callback) {
         FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageUrl())
                 .delete()
@@ -224,27 +230,4 @@ public class FirebaseManager {
                     Log.w("Firebase", "Error deleting image", e);
                 });
     }
-
-
-    public interface OnDeleteItemCallback {
-        void onDeleteItem(ClothingItem item);
-    }
-
-    public interface OnHandleItemDownloadedCallback {
-        void onHandleItemDownloaded(ClothingItem item);
-    }
-
-    public interface OnHandleItemsDownloadCompletedCallback {
-        void onHandleItemsDownloadCompleted();
-    }
-
-    public interface OnImageUploadedCallback {
-        void onImageUploaded(ClothingItem item);
-    }
-
-    public interface OnUserAddedCallback {
-        void onUserAddedSuccessfully();
-        void onUserAdditionFailed(String errorMessage);
-    }
-
 }

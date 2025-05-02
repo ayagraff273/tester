@@ -24,9 +24,9 @@ public class LoginActivity extends AppCompatActivity {
                     String email = textemail.getText().toString();
                     EditText textPsw = findViewById(R.id.editTextPassword);
                     String password = textPsw.getText().toString();
-                    FirebaseManager manager = new FirebaseManager();
+                    DatabaseManager manager = DataManagerFactory.getDataManager();
                     if (!email.isEmpty() && !password.isEmpty()) {
-                        manager.loginUser(email, password, new FirebaseManager.OnLoginCallback(){
+                        manager.loginUser(email, password, new DatabaseManager.OnLoginCallback(){
                             @Override
                             public void onLoginSuccess() {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);

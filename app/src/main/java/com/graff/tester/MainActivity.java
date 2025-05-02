@@ -35,8 +35,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.graff.tester.models.ClothingItem;
 import com.graff.tester.models.ClothingItemRepository;
 import com.graff.tester.models.ClothingType;
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int currentShirtIndex = 0;
     private int currentPantsIndex = 0;
     private ClothingType clothingType;
-    private FirebaseManager firebaseManager;
+    private DatabaseManager databaseManager;
     private static final int CAMERA_REQUEST_CODE = 100;
     private Uri cameraImageUri;
     private static final int NOTIFICATION_PERMISSION_CODE = 1;
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        databaseManager = DataManagerFactory.getDataManager();
         validateCurrentUser();
 
         setContentView(R.layout.activity_main);
@@ -110,8 +109,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     return true;
                 }
                 else if (itemId == R.id.menu_logout) {
-                    firebaseManager.signOut();
-                    FirebaseAuth.getInstance().signOut();
+                    databaseManager.signOut();
                     ClothingItemRepository.getInstance().clearShirtItems();
                     ClothingItemRepository.getInstance().clearPantsItems();
                     startActivity(new Intent(MainActivity.this, Opening.class));
@@ -168,8 +166,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         findViewById(R.id.pantsArrowRight).setOnClickListener(v -> changePants(1));
         findViewById(R.id.random).setOnClickListener(v -> randomOutfit());
 
-        firebaseManager = new FirebaseManager();
-        firebaseManager.downloadClothingImages(
+        databaseManager.downloadClothingImages(
                 this::handleImageLoaded, this::onHandleItemsDownloadCompleted
         );
 
@@ -241,12 +238,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         notificationManager.createNotificationChannel(channel);
     }
 
-
-
-
     private void validateCurrentUser() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
+        if (!this.databaseManager.isUserLoggedIn()) {
             Intent intent = new Intent(MainActivity.this,Opening.class);
             startActivity(intent);
         }
@@ -298,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    firebaseManager.uploadImageToFirebase(
+                    databaseManager.uploadImageToDatabase(
                             MainActivity.this,
                             cameraImageUri,
                             clothingType,
@@ -314,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Intent data = result.getData();
                     if (data != null) {
                         Uri selectedImage = data.getData();
-                        firebaseManager.uploadImageToFirebase(
+                        databaseManager.uploadImageToDatabase(
                                 MainActivity.this,
                                 selectedImage,
                                 clothingType,

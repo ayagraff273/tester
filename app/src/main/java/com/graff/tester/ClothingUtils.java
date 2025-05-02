@@ -30,7 +30,7 @@ public class ClothingUtils {
 
     public static void uploadClothingDrawableToFirebase(Context context, int drawableId, ClothingType clothingType, FirebaseManager.OnImageUploadedCallback callback) {
         Uri imageUri = getImageUriFromDrawable(context, drawableId);
-        FirebaseManager manager = new FirebaseManager();
-        manager.uploadImageToFirebase(context, imageUri, clothingType, callback);
+        DatabaseManager manager = DataManagerFactory.getDataManager();
+        manager.uploadImageToDatabase(context, imageUri, clothingType, callback);
     }
 }

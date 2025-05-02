@@ -69,8 +69,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                     .setTitle("מחיקת פריט לבוש")
                     .setMessage("את/ה בטוח/ה שאת/ה רוצה למחוק את הפריט הזה?")
                     .setPositiveButton("כן", (dialog, which) -> {
-                        FirebaseManager firebaseManager = new FirebaseManager();
-                        firebaseManager.deleteItem(item, item1 -> {
+                        DatabaseManager databaseManager = DataManagerFactory.getDataManager();
+                        databaseManager.deleteItem(item, item1 -> {
                             ClothingItemRepository.getInstance().removeItem(item);
                             clothingItems.remove(position);
                             notifyItemRemoved(position);
