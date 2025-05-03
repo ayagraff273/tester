@@ -19,6 +19,7 @@ public interface DatabaseManager {
     void downloadClothingImages(OnHandleItemDownloadedCallback callback,
                                 OnHandleItemsDownloadCompletedCallback completedCallback);
     void deleteItem(ClothingItem item, OnDeleteItemCallback callback);
+    void saveItemDescription(ClothingItem item, String newDesc);
 
     // callbacks
     interface OnLoginCallback {

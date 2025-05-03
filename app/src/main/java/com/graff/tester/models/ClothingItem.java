@@ -31,4 +31,8 @@ public class ClothingItem {
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String newDesc) {
+        this.description = newDesc;
+    }
 }
