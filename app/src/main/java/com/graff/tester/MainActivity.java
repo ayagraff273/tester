@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void randomOutfit() {
-        //TEST @ TODO - move somewhere else -
+        //TEST @ TODO - move somewhere else
         String userDesc = "I want lovely and warm summer look";
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
                 ClothingItemRepository.getInstance().getPantsItems(), new OutfitFinder.OnFindOutfitCallback() {
