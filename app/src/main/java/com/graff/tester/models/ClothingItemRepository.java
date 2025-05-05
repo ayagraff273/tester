@@ -32,26 +32,9 @@ public class ClothingItemRepository {
     public List<ClothingItem> getShirtItems() {
         return shirtItems;
     }
-    public List<String> getShirtDescriptions() {
-        return getDescription(shirtItems);
-    }
 
     public List<ClothingItem> getPantsItems() {
         return pantsItems;
-    }
-    public List<String> getPantsDescriptions() {
-        return getDescription(pantsItems);
-    }
-
-    @NonNull
-    private List<String> getDescription(List<ClothingItem> items) {
-        List<String> descriptions = new ArrayList<>();
-        for (ClothingItem item : items) {
-            if (item.description != null) {
-                descriptions.add(item.description);
-            }
-        }
-        return descriptions;
     }
 
     // Add item to the shirt list

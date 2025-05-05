@@ -40,7 +40,6 @@ import com.graff.tester.models.ClothingItem;
 import com.graff.tester.models.ClothingItemRepository;
 import com.graff.tester.models.ClothingType;
 import java.util.List;
-import java.util.Random;
 import java.util.Calendar;
 
 
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int currentPantsIndex = 0;
     private ClothingType clothingType;
     private DatabaseManager databaseManager;
+    private OutfitFinder outfitFinder;
     private static final int CAMERA_REQUEST_CODE = 100;
     private Uri cameraImageUri;
     private static final int NOTIFICATION_PERMISSION_CODE = 1;
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         databaseManager = DataManagerFactory.getDataManager();
+        outfitFinder = DataManagerFactory.getOutfitFinder();
         validateCurrentUser();
 
         setContentView(R.layout.activity_main);
@@ -356,11 +357,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void randomOutfit() {
-        Random random = new Random();
-        currentShirtIndex = random.nextInt(getShirtRepository().size());
-        currentPantsIndex = random.nextInt(getPantsRepository().size());
-        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
-        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
+        //TEST @ TODO - move somewhere else
+        String userDesc = "I want lovely and warm summer look";
+        outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
+                ClothingItemRepository.getInstance().getPantsItems());
+
+//        Random random = new Random();
+//        currentShirtIndex = random.nextInt(getShirtRepository().size());
+//        currentPantsIndex = random.nextInt(getPantsRepository().size());
+//        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
+//        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
 
     private void handleImageLoaded(ClothingItem item) {

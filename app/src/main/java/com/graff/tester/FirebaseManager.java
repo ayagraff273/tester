@@ -292,11 +292,6 @@ public class FirebaseManager implements DatabaseManager {
     }
 
     @Override
-    public void findOutfit(String outfitDescription) {
-
-    }
-
-    @Override
     public void deleteItem(ClothingItem item, OnDeleteItemCallback callback) {
         FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageUrl())
                 .delete()

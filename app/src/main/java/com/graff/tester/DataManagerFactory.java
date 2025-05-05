@@ -13,5 +13,17 @@ public class DataManagerFactory {
                         + AppConfig.CURRENT_DATABASE);
         }
     }
+
+    public static OutfitFinder getOutfitFinder() {
+        switch (AppConfig.CURRENT_DATABASE) {
+            case FIREBASE:
+                return new FirebaseOutfitFinder();
+            case AWS:
+                throw new IllegalArgumentException("The AWS output finder is not yet supported.");
+            default:
+                throw new IllegalArgumentException("Unsupported AI infrastructure: "
+                        + AppConfig.CURRENT_DATABASE);
+        }
+    }
 }
 
