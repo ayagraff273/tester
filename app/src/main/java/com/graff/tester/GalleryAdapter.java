@@ -107,21 +107,27 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     private void showEditDialog(ClothingItem item, int position, TextView descriptionText) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final EditText input = new EditText(context);
-        input.setText(item.getDescription());
+        String desc = item.getDescription();
+        if (desc != null) {
+            input.setText(desc);
+        }
         input.setMinLines(3);
         input.setGravity(Gravity.TOP | Gravity.START);
 
         builder.setTitle("עריכת תיאור")
                 .setView(input)
                 .setPositiveButton("שמור", (dialog, which) -> {
-                    String newDesc = input.getText().toString();
-                    item.setDescription(newDesc);
-                    notifyItemChanged(position);
-                    descriptionText.setText(newDesc);
-                    DatabaseManager databaseManager = DataManagerFactory.getDataManager();
-                    databaseManager.saveItemDescription(item, newDesc);
-
-
+                    String newDesc = input.getText().toString().trim();
+                    newDesc = newDesc.isEmpty() ? null : newDesc;
+                    boolean descChanged = (desc == null) ? newDesc != null : !desc.equals(newDesc);
+                    if (descChanged)
+                    {
+                        item.setDescription(newDesc);
+                        notifyItemChanged(position);
+                        descriptionText.setText(newDesc);
+                        DatabaseManager databaseManager = DataManagerFactory.getDataManager();
+                        databaseManager.saveItemDescription(item, newDesc);
+                    }
                 })
                 .setNegativeButton("ביטול", null)
                 .show();

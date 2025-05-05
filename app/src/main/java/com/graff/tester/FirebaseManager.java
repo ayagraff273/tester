@@ -110,7 +110,7 @@ public class FirebaseManager implements DatabaseManager {
                         String imageUrl = doc.getString("imageUrl");
                         String typeString = doc.getString("type");
                         ClothingType clothingType = ClothingType.fromString(typeString);
-                        String description =  doc.contains("description") ? doc.getString("description") : Add_DESCRIPTION_NOTE;
+                        String description =  doc.contains("description") ? doc.getString("description") : null;
 
 
                         if (imageUrl != null && clothingType != null) {
@@ -159,7 +159,7 @@ public class FirebaseManager implements DatabaseManager {
                         });
                     }
                     else {
-                        uploadMetadata(context, clothingType, uploadCallback, Add_DESCRIPTION_NOTE, storageRef);
+                        uploadMetadata(context, clothingType, uploadCallback, null, storageRef);
                     }
                 }).addOnFailureListener(e ->
                         Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
@@ -290,6 +290,12 @@ public class FirebaseManager implements DatabaseManager {
                 .addOnSuccessListener(aVoid -> Log.d("Firebase", "Description updated"))
                 .addOnFailureListener(e -> Log.w("Firebase", "Failed to update description", e));
     }
+
+    @Override
+    public void findOutfit(String outfitDescription) {
+
+    }
+
     @Override
     public void deleteItem(ClothingItem item, OnDeleteItemCallback callback) {
         FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageUrl())
