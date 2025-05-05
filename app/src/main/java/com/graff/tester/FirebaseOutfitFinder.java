@@ -34,44 +34,47 @@ public class FirebaseOutfitFinder implements OutfitFinder {
 
     @Override
     public void findOutfit(String outfitDescription,
-                           List<ClothingItem> shirts, List<ClothingItem> pants) {
+                           List<ClothingItem> shirts, List<ClothingItem> pants,OnFindOutfitCallback callback) {
+        String promptText = null;
         try {
-            String promptText = buildPrompt(shirts, pants, outfitDescription);
-            Content prompt = new Content.Builder()
-                    .addText(promptText)
-                    .build();
-            Executor executor = Executors.newSingleThreadExecutor();
-
-            GenerativeModelFutures modelFutures = GenerativeModelFutures.from(getOutfitModel());
-            ListenableFuture<GenerateContentResponse> response = modelFutures.generateContent(prompt);
-
-            Futures.addCallback(response, new FutureCallback<>() {
-                @Override
-                public void onSuccess(GenerateContentResponse result) {
-                    try {
-                        String resultText = result.getText();
-                        assert resultText != null;
-                        JSONObject obj = new JSONObject(resultText);
-                        boolean foundOutfit = obj.optBoolean(OUTFIT_FOUND, false);
-                        String shirtId = obj.optString(SHIRT_ID, null);
-                        String pantsId = obj.optString(PANTS_ID, null);
-                        String explanation = obj.optString(EXPLANATION, null);
-                        //TODO - callback
-                    } catch (JSONException e) {
-                        Log.w("Firebase", "Failed to find outfit: " + e);
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Throwable t) {
-                    Log.w("Firebase", "Failed to find outfit: " + t);
-                    //TODO - callback
-                }
-            }, executor);
-        } catch (Exception e) {
-            //throw new RuntimeException(e);
-            Log.w("Firebase", "Error finding outfit", e);
+            promptText = buildPrompt(shirts, pants, outfitDescription);
+        } catch (JSONException e) {
+            callback.onFindOutfitFailed("Failed to build prompt.");
         }
+
+        assert promptText != null;
+        Content prompt = new Content.Builder()
+                .addText(promptText)
+                .build();
+        Executor executor = Executors.newSingleThreadExecutor();
+
+        GenerativeModelFutures modelFutures = GenerativeModelFutures.from(getOutfitModel());
+        ListenableFuture<GenerateContentResponse> response = modelFutures.generateContent(prompt);
+
+        Futures.addCallback(response, new FutureCallback<>() {
+            @Override
+            public void onSuccess(GenerateContentResponse result) {
+                try {
+                    String resultText = result.getText();
+                    assert resultText != null;
+                    JSONObject obj = new JSONObject(resultText);
+                    boolean foundOutfit = obj.optBoolean(OUTFIT_FOUND, false);
+                    String shirtId = obj.optString(SHIRT_ID, null);
+                    String pantsId = obj.optString(PANTS_ID, null);
+                    String explanation = obj.optString(EXPLANATION, null);
+                    callback.onFindOutfitSuccess(shirtId, pantsId, foundOutfit, explanation);
+                } catch (JSONException e) {
+                    Log.w("VertexAI", "Failed to parse response: " + e);
+                    callback.onFindOutfitFailed("Failed to parse response.");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                Log.w("VertexAI", "Failed to find outfit: " + t);
+                callback.onFindOutfitFailed("Failed to find outfit.");
+            }
+        }, executor);
     }
 
     private GenerativeModel getOutfitModel() {
@@ -136,7 +139,7 @@ public class FirebaseOutfitFinder implements OutfitFinder {
         for (ClothingItem item : items) {
             if (item.getDescription() != null && !item.getDescription().isEmpty()) {
                 JSONObject obj = new JSONObject();
-                obj.put(id_name, item.getDocRef().getId());
+                obj.put(id_name, item.getId());
                 obj.put("description", item.getDescription());
                 jsonArray.put(obj);
             }

@@ -67,5 +67,22 @@ public class ClothingItemRepository {
     public void clearPantsItems() {
         pantsItems.clear();
     }
+
+    // @TODO - 1 function
+    public int getShirtIndexById(String id) {
+        for (int i = 0; i < shirtItems.size(); i++) {
+            if (shirtItems.get(i).getId().equals(id))
+                return i;
+        }
+        return -1;
+    }
+
+    public int getPantsIndexById(String id) {
+        for (int i = 0; i < pantsItems.size(); i++) {
+            if (pantsItems.get(i).getId().equals(id))
+                return i;
+        }
+        return -1;
+    }
 }
 

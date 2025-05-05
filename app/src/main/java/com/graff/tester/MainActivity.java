@@ -357,16 +357,54 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void randomOutfit() {
-        //TEST @ TODO - move somewhere else
+        //TEST @ TODO - move somewhere else -
         String userDesc = "I want lovely and warm summer look";
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
-                ClothingItemRepository.getInstance().getPantsItems());
+                ClothingItemRepository.getInstance().getPantsItems(), new OutfitFinder.OnFindOutfitCallback() {
+                    @Override
+                    public void onFindOutfitSuccess(String shirtId, String pantsId, boolean found, String explanation) {
+                        onOutfitFound(shirtId, pantsId, found, explanation);
+                    }
+
+                    @Override
+                    public void onFindOutfitFailed(String errorMessage) {
+                        onOutfitNotFound(errorMessage);
+                    }
+                });
 
 //        Random random = new Random();
 //        currentShirtIndex = random.nextInt(getShirtRepository().size());
 //        currentPantsIndex = random.nextInt(getPantsRepository().size());
 //        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
 //        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
+    }
+
+    public void onOutfitFound(String shirtId, String pantsId, boolean found, String explanation) {
+        runOnUiThread(() -> {
+            // Handle successful outfit match
+            if (found) {
+                //Display the outfit in the app
+                int shirtIndex = ClothingItemRepository.getInstance().getShirtIndexById(shirtId);
+                int pantsIndex = ClothingItemRepository.getInstance().getPantsIndexById(pantsId);
+                if (shirtIndex != -1 && pantsIndex != -1) {
+                    currentShirtIndex = shirtIndex;
+                    currentPantsIndex = pantsIndex;
+                    Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
+                    Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
+                }
+            } else {
+                Log.d("OutfitFinder", "No matching outfit found. Explanation: " + explanation);
+                // TODO: Show message to user ?
+            }
+        });
+    }
+
+    public void onOutfitNotFound(String errorMessage) {
+        runOnUiThread(() -> {
+            // Handle failure (e.g., no data, exception)
+            Log.e("OutfitFinder", "Outfit finding failed: " + errorMessage);
+            // TODO: Show error message to user
+        });
     }
 
     private void handleImageLoaded(ClothingItem item) {
