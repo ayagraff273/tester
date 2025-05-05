@@ -20,6 +20,10 @@ public class ClothingItem {
         return docRef;
     }
 
+    public String getId() {
+        return docRef.getId();
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
