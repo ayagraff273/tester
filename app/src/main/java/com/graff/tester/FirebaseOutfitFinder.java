@@ -26,6 +26,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class FirebaseOutfitFinder implements OutfitFinder {
+    private final String SHIRT_ID = "shirt_id";
+    private final String PANTS_ID = "pants_id";
+    private final String EXPLANATION = "explanation";
+    private final String OUTFIT_FOUND = "outfit_found";
+
+
     @Override
     public void findOutfit(String outfitDescription,
                            List<ClothingItem> shirts, List<ClothingItem> pants) {
@@ -46,9 +52,10 @@ public class FirebaseOutfitFinder implements OutfitFinder {
                         String resultText = result.getText();
                         assert resultText != null;
                         JSONObject obj = new JSONObject(resultText);
-                        String shirtId = obj.optString("shirt_id", null);
-                        String pantsId = obj.optString("pants_id", null);
-                        String explanation = obj.optString("explanation", null);
+                        boolean foundOutfit = obj.optBoolean(OUTFIT_FOUND, false);
+                        String shirtId = obj.optString(SHIRT_ID, null);
+                        String pantsId = obj.optString(PANTS_ID, null);
+                        String explanation = obj.optString(EXPLANATION, null);
                         //TODO - callback
                     } catch (JSONException e) {
                         Log.w("Firebase", "Failed to find outfit: " + e);
@@ -70,9 +77,10 @@ public class FirebaseOutfitFinder implements OutfitFinder {
     private GenerativeModel getOutfitModel() {
         // Provide a JSON schema object using a standard format.
         Schema jsonSchema = Schema.obj( /* properties */
-                Map.of("shirt_id", Schema.str(),
-                        "pants_id", Schema.str(),
-                        "explanation", Schema.str()
+                Map.of(SHIRT_ID, Schema.str(),
+                        PANTS_ID, Schema.str(),
+                        EXPLANATION, Schema.str(),
+                        OUTFIT_FOUND, Schema.enumeration(List.of("true", "false"))
                 )
         );
         // In the generation config, set the `responseMimeType` to `application/json`
@@ -96,7 +104,7 @@ public class FirebaseOutfitFinder implements OutfitFinder {
         // 1. General instruction
         prompt.append("You are an assistant helping users choose an outfit consisting of one shirt and one pair of pants.\n");
         prompt.append("You will receive a list of shirt and pant items, and the user's personal preferences.\n");
-        prompt.append("Based on that, pick the best matching combination.\n\n");
+        prompt.append("Based on that, pick the best matching combination. If you don't find anything, return empty strings for the ids.\n\n");
 
         // 2. Insert user instructions
         prompt.append("User instructions:\n");
@@ -106,14 +114,19 @@ public class FirebaseOutfitFinder implements OutfitFinder {
         prompt.append("Here is the available clothing:\n");
 
         JSONObject root = new JSONObject();
-        root.put("shirts", toJSONArray(shirts, "shirt_id"));
-        root.put("pants", toJSONArray(pants, "pants_id"));
+        root.put("shirts", toJSONArray(shirts, SHIRT_ID));
+        root.put("pants", toJSONArray(pants, PANTS_ID));
 
         prompt.append(root.toString(2)).append("\n\n");
 
         // 4. Expected format
         prompt.append("Respond in the following JSON format:\n");
-        prompt.append("{ \"shirts_id\": \"\", \"pants_id\": \"\", \"explanation\": \"\" }");
+        // 4. Expected format
+        prompt.append("Respond in the following JSON format:\n");
+        prompt.append("{ \"" + SHIRT_ID + "\": \"\", ");
+        prompt.append("\"" + PANTS_ID + "\": \"\", ");
+        prompt.append("\"" + EXPLANATION + "\": \"\", ");
+        prompt.append("\"" + OUTFIT_FOUND + "\": \"true\" or \"false\" }");
 
         return prompt.toString();
     }
