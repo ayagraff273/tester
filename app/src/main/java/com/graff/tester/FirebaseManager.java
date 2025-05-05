@@ -37,6 +37,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class FirebaseManager implements DatabaseManager {
+    public static final String Add_DESCRIPTION_NOTE = "Looks like this item needs a description. Let’s add one!";
     final private FirebaseFirestore db;
     final private GenerativeModel model;
 
@@ -109,7 +110,7 @@ public class FirebaseManager implements DatabaseManager {
                         String imageUrl = doc.getString("imageUrl");
                         String typeString = doc.getString("type");
                         ClothingType clothingType = ClothingType.fromString(typeString);
-                        String description =  doc.contains("description") ? doc.getString("description") : "Looks like this item needs a description. Let’s add one!";
+                        String description =  doc.contains("description") ? doc.getString("description") : Add_DESCRIPTION_NOTE;
 
 
                         if (imageUrl != null && clothingType != null) {
@@ -150,17 +151,29 @@ public class FirebaseManager implements DatabaseManager {
                 .getReference("clothes/" + uniqueId + "." + fileExtension);
 
         storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> generateAIDescription(taskSnapshot, description -> {
-                    // Check if file exists before getting download URL
-                    storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
-                            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                String imageUrl = uri.toString();
-                                saveImageToFirestore(context, imageUrl, clothingType, description, uploadCallback);
-                            })
-                    ).addOnFailureListener(e ->
-                            Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
-                    );
-                }));
+                .addOnSuccessListener(taskSnapshot -> {
+                    if (PreferencesManager.getUseGenAI(context)) {
+                        generateAIDescription(taskSnapshot, description -> {
+                            // Check if file exists before getting download URL
+                            uploadMetadata(context, clothingType, uploadCallback, description, storageRef);
+                        });
+                    }
+                    else {
+                        uploadMetadata(context, clothingType, uploadCallback, Add_DESCRIPTION_NOTE, storageRef);
+                    }
+                }).addOnFailureListener(e ->
+                        Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
+                );
+    }
+
+    private void uploadMetadata(Context context, ClothingType clothingType, OnImageUploadedCallback uploadCallback, String description, StorageReference storageRef) {
+        storageRef.getMetadata().addOnSuccessListener(storageMetadata ->
+                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageUrl = uri.toString();
+                    saveImageToFirestore(context, imageUrl, clothingType, description, uploadCallback);
+                })).addOnFailureListener(e ->
+                Toast.makeText(context, "Error: File not found!", Toast.LENGTH_SHORT).show()
+        );
     }
 
     private void generateAIDescription(UploadTask.TaskSnapshot taskSnapshot, OnDescriptionGeneratedCallback callback) {

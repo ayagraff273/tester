@@ -9,7 +9,6 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -22,9 +21,11 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuInflater;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Switch;
 import android.widget.Toast;
 import android.Manifest;
 import androidx.activity.result.ActivityResultLauncher;
@@ -95,9 +96,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     startActivity(new Intent(MainActivity.this, AboutActivity.class));
                     return true;
                 } else if (itemId == R.id.menu_reminder) {
-
-                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                    boolean alarmSet = prefs.getBoolean("alarmSet", false);
+                    boolean alarmSet = PreferencesManager.getAlarmOn(this);
                     if (alarmSet) {
                         Toast.makeText(MainActivity.this, "תזכורת יומית כבר מופעלת", Toast.LENGTH_SHORT).show();
                     } else {
@@ -175,6 +174,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
+
+        Switch use_ai = findViewById(R.id.use_ai);
+        boolean isGenAIEnabled = PreferencesManager.getUseGenAI(this);
+        use_ai.setChecked(isGenAIEnabled);
+        use_ai.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) ->
+                PreferencesManager.setUseGenAI(this, isChecked));
     }
     private void checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -219,12 +224,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 AlarmManager.INTERVAL_DAY,
                 pendingIntent
         );
-
-        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("alarmSet", true);
-        editor.apply();
-
+        PreferencesManager.setAlarmOn(this, true);
     }
 
     private void createNotificationChannel() {
