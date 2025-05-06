@@ -41,7 +41,7 @@ import com.graff.tester.models.ClothingItemRepository;
 import com.graff.tester.models.ClothingType;
 import java.util.List;
 import java.util.Calendar;
-
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -357,7 +357,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void randomOutfit() {
-        //TEST @ TODO - move somewhere else
+       Random random = new Random();
+     currentShirtIndex = random.nextInt(getShirtRepository().size());
+     currentPantsIndex = random.nextInt(getPantsRepository().size());
+       Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
+       Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
+    }
+    public void generate_outfit(){
         String userDesc = "I want lovely and warm summer look";
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
                 ClothingItemRepository.getInstance().getPantsItems(), new OutfitFinder.OnFindOutfitCallback() {
@@ -371,12 +377,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         onOutfitNotFound(errorMessage);
                     }
                 });
-
-//        Random random = new Random();
-//        currentShirtIndex = random.nextInt(getShirtRepository().size());
-//        currentPantsIndex = random.nextInt(getPantsRepository().size());
-//        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
-//        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
 
     public void onOutfitFound(String shirtId, String pantsId, boolean found, String explanation) {

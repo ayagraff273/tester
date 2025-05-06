@@ -171,37 +171,19 @@
         tools:ignore="TouchTargetSizeCheck" />
     <ImageView
         android:id="@+id/imageViewShoes"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/shoes"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ai_outfit"
         android:contentDescription="@string/shoes"
         app:layout_constraintTop_toBottomOf="@id/imageViewPants"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/rounded_background"
         android:elevation="10dp" />
-    <ImageView
-        android:id="@+id/shoesArrowRight"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/arrow_right"
-        android:contentDescription="@string/right_arrow_shoes"
-        app:layout_constraintTop_toTopOf="@id/imageViewShoes"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewShoes"
-        app:layout_constraintStart_toEndOf="@id/imageViewShoes"
-        android:layout_marginStart="8dp" />
 
-    <ImageView
-        android:id="@+id/shoesArrowLeft"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/arrow_left"
-        android:contentDescription="@string/left_arrow_shoes"
-        app:layout_constraintTop_toTopOf="@id/imageViewShoes"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewShoes"
-        app:layout_constraintEnd_toStartOf="@id/imageViewShoes"
-        android:layout_marginEnd="8dp" />
+
+
 
     <Switch
         android:id="@+id/use_ai"
@@ -209,7 +191,20 @@
         android:layout_height="wrap_content"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:layout_marginEnd="35dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/ai_icon"
+        app:layout_constraintEnd_toStartOf="@id/ai_icon"
+        app:layout_constraintTop_toTopOf="@id/ai_icon" />
+    <ImageView
+        android:id="@+id/ai_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ai_icon"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:scaleType="centerCrop"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="0dp"
         app:layout_constraintBottom_toBottomOf="@id/appName"
         app:layout_constraintEnd_toStartOf="@id/appName"
         app:layout_constraintTop_toTopOf="@id/appName" />
