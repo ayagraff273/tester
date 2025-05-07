@@ -8,7 +8,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -114,12 +113,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     return true;
                 }
                 else if (itemId == R.id.menu_logout) {
-                    databaseManager.signOut();
-                    ClothingItemRepository.getInstance().clearShirtItems();
-                    ClothingItemRepository.getInstance().clearPantsItems();
-                    startActivity(new Intent(MainActivity.this, Opening.class));
-                    finish();
-                    return true;
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Log out")
+                            .setMessage("are you sure you want to log out?")
+                            .setPositiveButton("yes", (dialog, which) -> {
+                                databaseManager.signOut();
+                                ClothingItemRepository.getInstance().clearShirtItems();
+                                ClothingItemRepository.getInstance().clearPantsItems();
+                                startActivity(new Intent(MainActivity.this, Opening.class));
+                                finish();
+                            })
+                            .setNegativeButton("cancel", (dialog, which) -> dialog.dismiss())
+                            .show();
+
                 }
 
                 return false;
@@ -187,30 +193,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         use_ai.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) ->
                 PreferencesManager.setUseGenAI(this, isChecked));
 
-        ai_outfit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final EditText input = new EditText(MainActivity.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
+        ai_outfit.setOnClickListener(v -> {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Let's build a smart outfit!")  // כותרת הדיאלוג
-                        .setMessage("Enter your desired outfit:")
-                        .setView(input)  // הוספת EditText לדיאלוג
-                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String userdesc = input.getText().toString();
-                                generate_outfit(userdesc);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-                builder.create().show();
+            if (!PreferencesManager.getUseGenAI(MainActivity.this)) {
+                Toast.makeText(MainActivity.this, "You need to enable AI to use this feature!", Toast.LENGTH_LONG).show();
+                return;
             }
+            final EditText input = new EditText(MainActivity.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Let's build a smart outfit!")
+                    .setMessage("Enter your desired outfit:")
+                    .setView(input)  // הוספת EditText לדיאלוג
+                    .setPositiveButton("Send", (dialog, id) -> {
+                        String userdesc = input.getText().toString();
+                        generate_outfit(userdesc);
+                    })
+                    .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
+
+            builder.create().show();
         });
     }
     private void checkNotificationPermission() {
