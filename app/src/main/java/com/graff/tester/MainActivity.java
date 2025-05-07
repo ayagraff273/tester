@@ -139,9 +139,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ImageButton add_shirt =findViewById(R.id.addShirt);
         add_shirt.setOnClickListener(view -> {
             MainActivity.this.clothingType = ClothingType.SHIRT;
-            String[] options = {"צלם תמונה", "בחר מהגלריה"};
+            String[] options = {"take a photo", "choose from gallery"};
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("בחר אפשרות");
+            builder.setTitle("pick an option");
             builder.setItems(options, (dialog, which) -> {
                 if (which == 0) {
                     checkCameraPermissionAndOpen();
@@ -156,9 +156,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ImageButton add_pants =findViewById(R.id.addPants);
         add_pants.setOnClickListener(view -> {
             MainActivity.this.clothingType = ClothingType.PANTS;
-            String[] options = {"צלם תמונה", "בחר מהגלריה"};
+            String[] options = {"take a photo", "choose from gallery"};
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("בחר אפשרות");
+            builder.setTitle("pick an option");
             builder.setItems(options, (dialog, which) -> {
                 if (which == 0) {
                     checkCameraPermissionAndOpen();
@@ -390,11 +390,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void randomOutfit() {
-       Random random = new Random();
-     currentShirtIndex = random.nextInt(getShirtRepository().size());
-     currentPantsIndex = random.nextInt(getPantsRepository().size());
-       Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
-       Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
+        Random random = new Random();
+        currentShirtIndex = random.nextInt(getShirtRepository().size());
+        currentPantsIndex = random.nextInt(getPantsRepository().size());
+        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
+        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
     public void generate_outfit(String userDesc){
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),

@@ -6,16 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/background_color"
+    android:background="#FDFDFD"
     android:padding="20dp"
     android:id="@+id/opening"
     >
 
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome"
+        android:src="@drawable/join_us"
         android:textSize="45sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -56,7 +56,7 @@
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sign_in"
+        android:text="@string/login"
         android:textSize="18sp"
         android:textColor="@color/white"
         android:backgroundTint="@color/button_color"
@@ -68,7 +68,7 @@
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sign_up"
+        android:text="@string/registration"
         android:textSize="18sp"
         android:textColor="@color/white"
         android:backgroundTint="@color/button_color"

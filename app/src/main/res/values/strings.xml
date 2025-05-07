@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">tester</string>
-    <string name="hint_email">דואר אלקטרוני</string>
-    <string name="login">התחברות</string>
-    <string name="password">סיסמא</string>
-    <string name="login_button">התחבר</string>
-    <string name="aboutTheApp">על האפליקציה</string>
+    <string name="hint_email">Gmail</string>
+    <string name="login">Log in</string>
+    <string name="password">password</string>
+    <string name="login_button">log in</string>
+    <string name="aboutTheApp"> about the app</string>
     <string name="contentAbout">האפליקציה הזו נולדה מתוך אהבה לאופנה ורצון לעשות סדר בארון – תרתי משמע. הרעיון פשוט: לעזור לך לבחור בגדים בקלות,ולנהל את הארון הדיגיטלי האישי שלך.\n\nאני איה גרף, תלמידת מגמת הנדסת תוכנה, בניתי את האפליקציה הזו בתור פרויקט גמר. תמיד רציתי פתרון פשוט ומהנה לבחירת בגדים, אז החלטתי ליצור אחד בעצמי.\n\nיש לך רעיון לשיפור? נתקלת בבאג? או סתם בא לך לפרגן? אני כאן!</string>
     <string name="contact">צור קשר</string>
     <string name="messy_clothes_clueless">messy clothes clueless</string>
@@ -12,12 +12,12 @@
     <string name="back">Back</string>
     <string name="the_closet">the closet</string>
     <string name="your_gallery">גלריית הבגדים שלי</string>
-    <string name="registration">הרשמה</string>
+    <string name="registration">register</string>
     <string name="gmail">דואר אלקטרוני</string>
-    <string name="register_button">הירשם</string>
-    <string name="login_redirect">כבר יש לך חשבון? התחבר</string>
-    <string name="welcome">ברוכים הבאים!</string>
-    <string name="signin_or_signup">אנא התחברו או הירשמו כדי להמשיך</string>
+    <string name="register_button">register</string>
+    <string name="login_redirect">you already have an account? log in</string>
+    <string name="welcome">welcome, join us!</string>
+    <string name="signin_or_signup">please sign in or sign up in order to continue</string>
     <string name="sign_in">התחברות</string>
     <string name="pants_picture">pants picture</string>
     <string name="sign_up">הרשמה</string>
@@ -41,5 +41,5 @@
     <string name="about_the_app">about the app</string>
     <string name="delete">מחק פריט</string>
     <string name="item">item</string>
-    <string name="signup_redirect">אין לך חשבון? הירשם</string>
+    <string name="signup_redirect">you dont have an account? sign up</string>
 </resources>
