@@ -169,12 +169,12 @@
         app:layout_constraintEnd_toEndOf="@id/imageViewPants"
         app:layout_constraintTop_toTopOf="@id/imageViewPants"
         tools:ignore="TouchTargetSizeCheck" />
-    <ImageView
-        android:id="@+id/imageViewShoes"
+    <ImageButton
+        android:id="@+id/ai_outfit"
         android:layout_width="150dp"
         android:layout_height="80dp"
         android:src="@drawable/ai_outfit"
-        android:contentDescription="@string/shoes"
+        android:contentDescription="ai outfit"
         app:layout_constraintTop_toBottomOf="@id/imageViewPants"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -208,6 +208,17 @@
         app:layout_constraintBottom_toBottomOf="@id/appName"
         app:layout_constraintEnd_toStartOf="@id/appName"
         app:layout_constraintTop_toTopOf="@id/appName" />
+    <ImageView
+        android:id="@+id/loadingImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/hourglass"
+    android:visibility="gone"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

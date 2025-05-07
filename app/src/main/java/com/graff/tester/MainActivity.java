@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -19,9 +20,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuInflater;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final float SHAKE_THRESHOLD = 12.0f;
     private static final int SHAKE_WAIT_TIME_MS = 500;
     private long lastShakeTime = 0;
+    private ImageButton ai_outfit;
 
 
     private List<ClothingItem> getShirtRepository() {
@@ -77,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         databaseManager = DataManagerFactory.getDataManager();
         outfitFinder = DataManagerFactory.getOutfitFinder();
         validateCurrentUser();
-
         setContentView(R.layout.activity_main);
+        ai_outfit = findViewById(R.id.ai_outfit);
         shirtView = findViewById(R.id.imageViewShirt);
         pantsView = findViewById(R.id.imageViewPants);
         ImageButton menuButton = findViewById(R.id.menuButton);
@@ -181,6 +186,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         use_ai.setChecked(isGenAIEnabled);
         use_ai.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) ->
                 PreferencesManager.setUseGenAI(this, isChecked));
+
+        ai_outfit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText input = new EditText(MainActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Let's build a smart outfit!")  // כותרת הדיאלוג
+                        .setMessage("Enter your desired outfit:")
+                        .setView(input)  // הוספת EditText לדיאלוג
+                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String userdesc = input.getText().toString();
+                                generate_outfit(userdesc);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                builder.create().show();
+            }
+        });
     }
     private void checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -363,8 +394,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
        Glide.with(this).load(getShirtRepository().get(currentShirtIndex).getImageUrl()).into(shirtView);
        Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
-    public void generate_outfit(){
-        String userDesc = "I want lovely and warm summer look";
+    public void generate_outfit(String userDesc){
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
                 ClothingItemRepository.getInstance().getPantsItems(), new OutfitFinder.OnFindOutfitCallback() {
                     @Override
@@ -408,6 +438,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void handleImageLoaded(ClothingItem item) {
+        ImageView loadingImage = findViewById(R.id.loadingImage);
+        loadingImage.setVisibility(View.VISIBLE);
+
+
         runOnUiThread(() -> {
             if (item.clothingType == ClothingType.SHIRT) {
                 if (getShirtRepository().isEmpty())
@@ -419,6 +453,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
+        loadingImage.setVisibility(View.GONE);
+
     }
 
     private void onHandleItemsDownloadCompleted() {
@@ -437,6 +473,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void handleImageUploaded(ClothingItem item) {
+        ImageView loadingImage = findViewById(R.id.loadingImage);
+        loadingImage.setVisibility(View.VISIBLE);
         runOnUiThread(() -> {
             if (item.getClothingType() == ClothingType.SHIRT) {
                 Glide.with(this).load(item.getImageUrl()).into(shirtView);
@@ -446,6 +484,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
+        loadingImage.setVisibility(View.GONE);
+
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
