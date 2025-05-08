@@ -1,0 +1,280 @@
+@startuml
+interface com.graff.tester.DatabaseManager {
+~ void createUser(String,String,OnUserAddedCallback)
+~ void loginUser(String,String,OnLoginCallback)
+~ void signOut()
+~ boolean isUserLoggedIn()
+~ void uploadImageToDatabase(Context,Uri,ClothingType,OnImageUploadedCallback)
+~ void downloadClothingImages(OnHandleItemDownloadedCallback,OnHandleItemsDownloadCompletedCallback)
+~ void deleteItem(ClothingItem,OnDeleteItemCallback)
+~ void saveItemDescription(ClothingItem,String)
+}
+
+interface com.graff.tester.DatabaseManager$OnLoginCallback {
+~ void onLoginSuccess()
+~ void onLoginFailed(String)
+}
+
+interface com.graff.tester.DatabaseManager$OnDeleteItemCallback {
+~ void onDeleteItem(ClothingItem)
+}
+
+interface com.graff.tester.DatabaseManager$OnHandleItemDownloadedCallback {
+~ void onHandleItemDownloaded(ClothingItem)
+}
+
+interface com.graff.tester.DatabaseManager$OnHandleItemsDownloadCompletedCallback {
+~ void onHandleItemsDownloadCompleted()
+}
+
+interface com.graff.tester.DatabaseManager$OnImageUploadedCallback {
+~ void onImageUploaded(ClothingItem)
+}
+
+interface com.graff.tester.DatabaseManager$OnUserAddedCallback {
+~ void onUserAddedSuccessfully()
+~ void onUserAdditionFailed(String)
+}
+
+class com.graff.tester.ClothingUtils {
++ {static} Uri getImageUriFromDrawable(Context,int)
++ {static} void uploadClothingDrawableToFirebase(Context,int,ClothingType,FirebaseManager.OnImageUploadedCallback)
+}
+
+interface com.graff.tester.OutfitFinder {
+~ void findOutfit(String,List<ClothingItem>,List<ClothingItem>,OnFindOutfitCallback)
+}
+
+interface com.graff.tester.OutfitFinder$OnFindOutfitCallback {
+~ void onFindOutfitSuccess(String,String,boolean,String)
+~ void onFindOutfitFailed(String)
+}
+
+class com.graff.tester.MainActivity {
+- ImageView shirtView
+- int currentShirtIndex
+- int currentPantsIndex
+- ClothingType clothingType
+- DatabaseManager databaseManager
+- OutfitFinder outfitFinder
+- {static} int CAMERA_REQUEST_CODE
+- Uri cameraImageUri
+- {static} int NOTIFICATION_PERMISSION_CODE
+- SensorManager sensorManager
+- Sensor accelerometer
+- {static} float SHAKE_THRESHOLD
+- {static} int SHAKE_WAIT_TIME_MS
+- long lastShakeTime
+- ImageButton ai_outfit
+~ ActivityResultLauncher<Intent> cameraLauncher
+~ ActivityResultLauncher<Intent> addimageActivityResultLauncher
+- List<ClothingItem> getShirtRepository()
+- List<ClothingItem> getPantsRepository()
+# void onCreate(Bundle)
+- void checkNotificationPermission()
+- void setDailyReminder()
+- void createNotificationChannel()
+- void validateCurrentUser()
+# void onResume()
+# void onPause()
+- void openCamera()
+- void checkCameraPermissionAndOpen()
++ void onRequestPermissionsResult(int,String[],int[])
+- void openNotificationSettings()
+- void changeShirt(int)
+- void changePants(int)
+- void randomOutfit()
++ void generate_outfit(String)
++ void onOutfitFound(String,String,boolean,String)
++ void onOutfitNotFound(String)
+- void handleImageLoaded(ClothingItem)
+- void onHandleItemsDownloadCompleted()
+- void handleImageUploaded(ClothingItem)
++ void onSensorChanged(SensorEvent)
++ void onAccuracyChanged(Sensor,int)
+}
+
+
+class com.graff.tester.SignupActivity {
+# void onCreate(Bundle)
+~ void onUserAdded()
+~ void onUserAddFailed(String)
+}
+
+class com.graff.tester.GalleryAdapter {
+- Context context
+- List<ClothingItem> clothingItems
++ <<Create>> GalleryAdapter(Context,List<ClothingItem>)
++ ViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(ViewHolder,int)
+- void showEditDialog(ClothingItem,int,TextView)
+- int dpToPx(int)
++ int getItemCount()
+}
+
+
+class com.graff.tester.GalleryAdapter$ViewHolder {
+~ ImageView imageView
+~ ImageButton btnDelete
++ <<Create>> ViewHolder(View)
++ boolean canRemoveFromList(ClothingItem)
+}
+
+
+class com.graff.tester.FirebaseManager {
++ {static} String Add_DESCRIPTION_NOTE
+- FirebaseFirestore db
+- GenerativeModel model
++ <<Create>> FirebaseManager()
++ void createUser(String,String,OnUserAddedCallback)
++ void loginUser(String,String,OnLoginCallback)
++ boolean isUserLoggedIn()
++ void signOut()
++ void downloadClothingImages(OnHandleItemDownloadedCallback,OnHandleItemsDownloadCompletedCallback)
++ void uploadImageToDatabase(Context,Uri,ClothingType,OnImageUploadedCallback)
+- void uploadMetadata(Context,ClothingType,OnImageUploadedCallback,String,StorageReference)
+- void generateAIDescription(UploadTask.TaskSnapshot,OnDescriptionGeneratedCallback)
+- void saveImageToFirestore(Context,String,ClothingType,String,OnImageUploadedCallback)
+- {static} String getFileExtension(Context,Uri)
++ void saveItemDescription(ClothingItem,String)
++ void deleteItem(ClothingItem,OnDeleteItemCallback)
+}
+
+
+interface com.graff.tester.FirebaseManager$OnDescriptionGeneratedCallback {
+~ void onDescriptionGenerated(String)
+}
+
+class com.graff.tester.models.ClothingItemRepository {
+- {static} ClothingItemRepository instance
+- List<ClothingItem> shirtItems
+- List<ClothingItem> pantsItems
+- <<Create>> ClothingItemRepository()
++ {static} ClothingItemRepository getInstance()
++ List<ClothingItem> getShirtItems()
++ List<ClothingItem> getPantsItems()
++ void addShirtItem(ClothingItem)
++ void addPantsItem(ClothingItem)
++ void removeItem(ClothingItem)
++ void clearShirtItems()
++ void clearPantsItems()
++ int getShirtIndexById(String)
++ int getPantsIndexById(String)
+}
+
+
+class com.graff.tester.PreferencesManager {
+- {static} String PREFS_NAME
+- {static} String KEY_USE_GEN_AI
+- {static} String ALARM_SET
++ {static} void setUseGenAI(Context,boolean)
++ {static} boolean getUseGenAI(Context)
++ {static} void setAlarmOn(Context,boolean)
++ {static} boolean getAlarmOn(Context)
+}
+
+
+class com.graff.tester.Opening {
+- ImageView shirtImage
+- int[] shirtImages
+- int[] pantsImages
+- int shirtIndex
+- int pantsIndex
+- Handler handler
+- Runnable changeImagesRunnable
+# void onCreate(Bundle)
+# void onDestroy()
+}
+
+
+enum com.graff.tester.models.ClothingType {
++  SHIRT
++  PANTS
++ String toString()
++ {static} ClothingType fromString(String)
+}
+
+
+class com.graff.tester.ReminderBroadcast {
++ void onReceive(Context,Intent)
+}
+
+class com.graff.tester.LoginActivity {
+# void onCreate(Bundle)
+}
+
+class com.graff.tester.models.ClothingItem {
++ DocumentReference docRef
++ String imageUrl
++ ClothingType clothingType
++ String description
++ <<Create>> ClothingItem(DocumentReference,String,ClothingType,String)
++ DocumentReference getDocRef()
++ String getId()
++ String getImageUrl()
++ ClothingType getClothingType()
++ String getDescription()
++ void setDescription(String)
+}
+
+
+class com.graff.tester.GalleryActivity {
+- List<ClothingItem> clothingItems
+# void onCreate(Bundle)
+}
+
+
+class com.graff.tester.AboutActivity {
+# void onCreate(Bundle)
+}
+
+class com.graff.tester.FirebaseOutfitFinder {
+- String SHIRT_ID
+- String PANTS_ID
+- String EXPLANATION
+- String OUTFIT_FOUND
++ void findOutfit(String,List<ClothingItem>,List<ClothingItem>,OnFindOutfitCallback)
+- GenerativeModel getOutfitModel()
+- String buildPrompt(List<ClothingItem>,List<ClothingItem>,String)
+- JSONArray toJSONArray(List<ClothingItem>,String)
+}
+
+
+class com.graff.tester.AppConfig {
++ {static} DataSourceType CURRENT_DATABASE
+}
+
+enum com.graff.tester.DataSourceType {
++  FIREBASE
++  AWS
+}
+
+class com.graff.tester.DataManagerFactory {
++ {static} DatabaseManager getDataManager()
++ {static} OutfitFinder getOutfitFinder()
+}
+
+
+
+com.graff.tester.DatabaseManager +.. com.graff.tester.DatabaseManager$OnLoginCallback
+com.graff.tester.DatabaseManager +.. com.graff.tester.DatabaseManager$OnDeleteItemCallback
+com.graff.tester.DatabaseManager +.. com.graff.tester.DatabaseManager$OnHandleItemDownloadedCallback
+com.graff.tester.DatabaseManager +.. com.graff.tester.DatabaseManager$OnHandleItemsDownloadCompletedCallback
+com.graff.tester.DatabaseManager +.. com.graff.tester.DatabaseManager$OnImageUploadedCallback
+com.graff.tester.DatabaseManager +.. com.graff.tester.DatabaseManager$OnUserAddedCallback
+com.graff.tester.OutfitFinder +.. com.graff.tester.OutfitFinder$OnFindOutfitCallback
+android.hardware.SensorEventListener <|.. com.graff.tester.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.graff.tester.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.graff.tester.SignupActivity
+com.graff.tester.Adapter <|-- com.graff.tester.GalleryAdapter
+com.graff.tester.GalleryAdapter +.. com.graff.tester.GalleryAdapter$ViewHolder
+com.graff.tester.ViewHolder <|-- com.graff.tester.GalleryAdapter$ViewHolder
+com.graff.tester.DatabaseManager <|.. com.graff.tester.FirebaseManager
+com.graff.tester.FirebaseManager +.. com.graff.tester.FirebaseManager$OnDescriptionGeneratedCallback
+androidx.appcompat.app.AppCompatActivity <|-- com.graff.tester.Opening
+android.content.BroadcastReceiver <|-- com.graff.tester.ReminderBroadcast
+androidx.appcompat.app.AppCompatActivity <|-- com.graff.tester.LoginActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.graff.tester.GalleryActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.graff.tester.AboutActivity
+com.graff.tester.OutfitFinder <|.. com.graff.tester.FirebaseOutfitFinder
+@enduml
