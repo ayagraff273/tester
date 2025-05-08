@@ -16,6 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/join_us"
+        android:contentDescription="@string/join_us"
         android:textSize="45sp"
         android:textStyle="bold"
         android:gravity="center"

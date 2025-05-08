@@ -176,7 +176,7 @@
         android:src="@drawable/ai_outfit"
         android:layout_centerInParent="true"
     android:scaleType="centerInside"
-        android:contentDescription="ai outfit"
+        android:contentDescription="@string/ai_outfit"
         app:layout_constraintTop_toBottomOf="@id/imageViewPants"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -193,7 +193,7 @@
         android:layout_height="wrap_content"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:layout_marginRight="0dp"
+        android:layout_marginEnd="0dp"
         app:layout_constraintBottom_toBottomOf="@id/ai_icon"
         app:layout_constraintEnd_toStartOf="@id/ai_icon"
         app:layout_constraintTop_toTopOf="@id/ai_icon" />
@@ -202,25 +202,17 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/ai_icon"
+        android:contentDescription="@string/ai_icon"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:scaleType="centerCrop"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="0dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="0dp"
         app:layout_constraintBottom_toBottomOf="@id/appName"
         app:layout_constraintEnd_toStartOf="@id/appName"
         app:layout_constraintTop_toTopOf="@id/appName" />
-    <ImageView
-        android:id="@+id/loadingImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/hourglass"
-    android:visibility="gone"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -440,9 +440,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void handleImageLoaded(ClothingItem item) {
-        ImageView loadingImage = findViewById(R.id.loadingImage);
-        loadingImage.setVisibility(View.VISIBLE);
-
 
         runOnUiThread(() -> {
             if (item.clothingType == ClothingType.SHIRT) {
@@ -455,8 +452,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
-        loadingImage.setVisibility(View.GONE);
-
     }
 
     private void onHandleItemsDownloadCompleted() {
@@ -475,8 +470,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void handleImageUploaded(ClothingItem item) {
-        ImageView loadingImage = findViewById(R.id.loadingImage);
-        loadingImage.setVisibility(View.VISIBLE);
+
         runOnUiThread(() -> {
             if (item.getClothingType() == ClothingType.SHIRT) {
                 Glide.with(this).load(item.getImageUrl()).into(shirtView);
@@ -486,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 ClothingItemRepository.getInstance().addPantsItem(item);
             }
         });
-        loadingImage.setVisibility(View.GONE);
+
 
     }
     @Override

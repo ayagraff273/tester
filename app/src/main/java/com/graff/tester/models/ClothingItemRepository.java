@@ -68,7 +68,6 @@ public class ClothingItemRepository {
         pantsItems.clear();
     }
 
-    // @TODO - 1 function
     public int getShirtIndexById(String id) {
         for (int i = 0; i < shirtItems.size(); i++) {
             if (shirtItems.get(i).getId().equals(id))
