@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.Manifest;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int SHAKE_WAIT_TIME_MS = 500;
     private long lastShakeTime = 0;
     private ImageButton ai_outfit;
+    private ProgressBar progressBar;
 
 
     private List<ClothingItem> getShirtRepository() {
@@ -135,8 +137,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
 
 
+        progressBar = findViewById(R.id.progressBar);
 
         ImageButton add_shirt =findViewById(R.id.addShirt);
+
         add_shirt.setOnClickListener(view -> {
             MainActivity.this.clothingType = ClothingType.SHIRT;
             String[] options = {"take a photo", "choose from gallery"};
@@ -341,6 +345,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Intent data = result.getData();
                     if (data != null) {
                         Uri selectedImage = data.getData();
+                        progressBar.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, "טוען...", Toast.LENGTH_SHORT).show();
                         databaseManager.uploadImageToDatabase(
                                 MainActivity.this,
                                 selectedImage,
@@ -397,16 +403,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
     public void generate_outfit(String userDesc){
+        progressBar.setVisibility(View.VISIBLE);
+
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
                 ClothingItemRepository.getInstance().getPantsItems(), new OutfitFinder.OnFindOutfitCallback() {
                     @Override
                     public void onFindOutfitSuccess(String shirtId, String pantsId, boolean found, String explanation) {
-                        onOutfitFound(shirtId, pantsId, found, explanation);
+                        runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            onOutfitFound(shirtId, pantsId, found, explanation);
+                        });
+
                     }
 
                     @Override
                     public void onFindOutfitFailed(String errorMessage) {
-                        onOutfitNotFound(errorMessage);
+                        runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            onOutfitNotFound(errorMessage);
+                        });
                     }
                 });
     }
@@ -470,6 +485,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void handleImageUploaded(ClothingItem item) {
+        progressBar.setVisibility(View.GONE);
 
         runOnUiThread(() -> {
             if (item.getClothingType() == ClothingType.SHIRT) {
