@@ -333,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
+                    progressBar.setVisibility(View.VISIBLE);
                     databaseManager.uploadImageToDatabase(
                             MainActivity.this,
                             cameraImageUri,
@@ -350,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if (data != null) {
                         Uri selectedImage = data.getData();
                         progressBar.setVisibility(View.VISIBLE);
-                        Toast.makeText(this, "טוען...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "loading...", Toast.LENGTH_SHORT).show();
                         databaseManager.uploadImageToDatabase(
                                 MainActivity.this,
                                 selectedImage,
