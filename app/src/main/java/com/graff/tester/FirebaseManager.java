@@ -177,7 +177,9 @@ public class FirebaseManager implements DatabaseManager {
     }
 
     private void generateAIDescription(UploadTask.TaskSnapshot taskSnapshot, OnDescriptionGeneratedCallback callback) {
-        String promptText = "You are a fashion stylist. Given an image of a clothing item, describe it in up to 16 words. you can mention season,colors, style, trendy, stylish phrasing.";
+        String promptText = "You are a fashion stylist. Given an image of a clothing item, describe it in up to 16 words. you can mention season,colors, style, trendy, stylish phrasing" +
+                " it will be shown directly to the user" +
+                "if you dont understand the picture leave the description empty, and if its not a clothing item, write 'it doesnt look like a clothing item' with an emoji";
 
         String mimeType = Objects.requireNonNull(taskSnapshot.getMetadata()).getContentType();
         String bucket = taskSnapshot.getMetadata().getBucket();

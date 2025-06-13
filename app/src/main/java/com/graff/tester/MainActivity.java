@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int currentPantsIndex = 0;
     private ClothingType clothingType;
     private DatabaseManager databaseManager;
+    private String userdesc;
+    private String latestdesc;
+
     private OutfitFinder outfitFinder;
     private static final int CAMERA_REQUEST_CODE = 100;
     private Uri cameraImageUri;
@@ -211,7 +214,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     .setMessage("Enter your desired outfit:")
                     .setView(input)  // הוספת EditText לדיאלוג
                     .setPositiveButton("Send", (dialog, id) -> {
-                        String userdesc = input.getText().toString();
+                         userdesc = input.getText().toString();
+                         latestdesc = userdesc;
                         generate_outfit(userdesc);
                     })
                     .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
@@ -441,7 +445,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             } else {
                 Log.d("OutfitFinder", "No matching outfit found. Explanation: " + explanation);
-                // TODO: Show message to user ?
+                new AlertDialog.Builder(this)
+                        .setTitle("could not find an outfit")
+                        .setMessage(explanation != null ? explanation : "לא נמצאה התאמה לבגדים הזמינים")
+                        .setPositiveButton("close", null)
+                        .show();
             }
         });
     }
@@ -450,7 +458,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         runOnUiThread(() -> {
             // Handle failure (e.g., no data, exception)
             Log.e("OutfitFinder", "Outfit finding failed: " + errorMessage);
-            // TODO: Show error message to user
+            new AlertDialog.Builder(this)
+                    .setTitle("Error")
+                    .setMessage("Something went wrong while trying to generate your outfit. Please try again or check your internet connection.")
+                    .setPositiveButton("Try Again", (dialog, which) -> {
+                        generate_outfit(latestdesc);
+                    })
+                    .setNegativeButton("Close", null)
+                    .setCancelable(false)
+                    .show();
         });
     }
 

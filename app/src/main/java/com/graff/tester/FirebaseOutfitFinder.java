@@ -108,6 +108,9 @@ public class FirebaseOutfitFinder implements OutfitFinder {
         prompt.append("You are an assistant helping users choose an outfit consisting of one shirt and one pair of pants.\n");
         prompt.append("You will receive a list of shirt and pant items, and the user's personal preferences.\n");
         prompt.append("Based on that, pick the best matching combination. If you don't find anything, return empty strings for the ids.\n\n");
+        prompt.append("In the \"explanation\" field, write a clear and friendly message that will be shown directly to the user.\n");
+        prompt.append("If you cannot find a suitable outfit, still provide a clear explanation of why.\n");
+
 
         // 2. Insert user instructions
         prompt.append("User instructions:\n");
