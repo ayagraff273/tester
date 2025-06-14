@@ -5,223 +5,239 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
 
-    android:background="@drawable/background"
-    tools:context=".MainActivity">
-    <ImageButton
-        android:scaleType="fitCenter"
-        android:id="@+id/menuButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@null"
-        android:contentDescription="תפריט"
-        android:src="@drawable/menu_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
+        android:background="@drawable/background"
+        tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/appName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/wardrobepal"
-        android:textSize="45sp"
-        android:textColor="#654321"
-        android:fontFamily="cursive"
-        android:textStyle="bold"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/menuButton"
+        <ImageButton
+            android:id="@+id/menuButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:contentDescription="תפריט"
+            android:scaleType="fitCenter"
+            android:src="@drawable/menu_circle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
 
-        android:layout_marginTop="20dp" />
-    <TextView
-        android:id="@+id/headline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/head_line"
-        android:textSize="20sp"
-        android:textColor="#012620"
+        <ImageView
+            android:id="@+id/no_internet"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:contentDescription="internet connection is lost "
+            android:src="@drawable/no_internet"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toStartOf="@id/menuButton"
+            app:layout_constraintTop_toTopOf="@id/menuButton"
 
-        android:fontFamily="serif-monospace"
-        android:textStyle="bold"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/appName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="0dp" />
-
-    <ImageButton
-        android:id="@+id/random"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_marginTop="15dp"
-        android:drawableBottom="@drawable/random2"
-        android:src="@drawable/random2"
-        android:padding="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="@string/random_clothes"
-        android:background="?attr/selectableItemBackground"
-
-        app:layout_constraintTop_toBottomOf="@id/headline" />
-
-    <ImageView
-        android:id="@+id/imageViewShirt"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/shirt2"
-        android:contentDescription="@string/shirt"
-        app:layout_constraintTop_toBottomOf="@id/random"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/rounded_background"
-        android:elevation="4dp" />
-
-    <ImageView
-        android:id="@+id/shirtArrowLeft"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/arrow_left"
-        android:contentDescription="@string/left_arrow_shirt"
-        app:layout_constraintTop_toTopOf="@id/imageViewShirt"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
-        app:layout_constraintEnd_toStartOf="@id/imageViewShirt"
-        android:layout_marginEnd="8dp" />
-
-    <ImageView
-        android:id="@+id/shirtArrowRight"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="@string/right_arrow_shirt"
-        android:src="@drawable/arrow_right"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
-        app:layout_constraintStart_toEndOf="@id/imageViewShirt"
-        app:layout_constraintTop_toTopOf="@id/imageViewShirt" />
-
-
-    <ImageView
-        android:id="@+id/imageViewPants"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_background"
-        android:contentDescription="@string/pants"
-        android:elevation="4dp"
-        android:src="@drawable/sample_pants"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageViewShirt"
-        tools:ignore="ImageContrastCheck" />
-
-    <ImageView
-        android:id="@+id/pantsArrowLeft"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/arrow_left"
-        android:contentDescription="@string/left_arrow_pants"
-        app:layout_constraintTop_toTopOf="@id/imageViewPants"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewPants"
-        app:layout_constraintEnd_toStartOf="@id/imageViewPants"
-        android:layout_marginEnd="8dp" />
-
-    <ImageView
-        android:id="@+id/pantsArrowRight"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/arrow_right"
-        android:contentDescription="@string/right_arrow_pants"
-        app:layout_constraintTop_toTopOf="@id/imageViewPants"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewPants"
-        app:layout_constraintStart_toEndOf="@id/imageViewPants"
-        android:layout_marginStart="8dp" />
-    <ImageButton
-        android:id="@+id/addShirt"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_margin="8dp"
-        android:background="@null"
-        android:contentDescription="@string/add_shirt"
-        android:elevation="5dp"
-        android:src="@drawable/plus_small"
-        app:layout_constraintEnd_toEndOf="@id/imageViewShirt"
-        app:layout_constraintTop_toTopOf="@id/imageViewShirt"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <ImageButton
-        android:id="@+id/addPants"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_margin="8dp"
-        android:background="@null"
-        android:contentDescription="@string/add_pants"
-        android:elevation="5dp"
-        android:src="@drawable/plus_small"
-        app:layout_constraintEnd_toEndOf="@id/imageViewPants"
-        app:layout_constraintTop_toTopOf="@id/imageViewPants"
-        tools:ignore="TouchTargetSizeCheck" />
-
-
-    <ImageButton
-        android:id="@+id/ai_outfit"
-        android:layout_width="150dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ai_outfit"
-        android:layout_centerInParent="true"
-    android:scaleType="centerInside"
-        android:contentDescription="@string/ai_outfit"
-        app:layout_constraintTop_toBottomOf="@id/imageViewPants"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_background"
-        android:elevation="10dp" />
+         />
 
 
 
+        <TextView
+            android:id="@+id/appName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="cursive"
+            android:gravity="center"
+            android:text="@string/wardrobepal"
+            android:textColor="#654321"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menuButton"
 
-    <Switch
-        android:id="@+id/use_ai"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:layout_marginEnd="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/ai_icon"
-        app:layout_constraintEnd_toStartOf="@id/ai_icon"
-        app:layout_constraintTop_toTopOf="@id/ai_icon" />
-    <ImageView
-        android:id="@+id/ai_icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ai_icon"
-        android:contentDescription="@string/ai_icon"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:scaleType="centerCrop"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/appName"
-        app:layout_constraintEnd_toStartOf="@id/appName"
-        app:layout_constraintTop_toTopOf="@id/appName" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:fontFamily="serif-monospace"
+            android:gravity="center"
+
+            android:text="@string/head_line"
+            android:textColor="#012620"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appName" />
+
+        <ImageButton
+            android:id="@+id/random"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/random_clothes"
+            android:drawableBottom="@drawable/random2"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/random2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/headline" />
+
+        <ImageView
+            android:id="@+id/imageViewShirt"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="@string/shirt"
+            android:elevation="4dp"
+            android:src="@drawable/shirt2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/random" />
+
+        <ImageView
+            android:id="@+id/shirtArrowLeft"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/left_arrow_shirt"
+            android:src="@drawable/arrow_left"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
+            app:layout_constraintEnd_toStartOf="@id/imageViewShirt"
+            app:layout_constraintTop_toTopOf="@id/imageViewShirt" />
+
+        <ImageView
+            android:id="@+id/shirtArrowRight"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/right_arrow_shirt"
+            android:src="@drawable/arrow_right"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewShirt"
+            app:layout_constraintStart_toEndOf="@id/imageViewShirt"
+            app:layout_constraintTop_toTopOf="@id/imageViewShirt" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imageViewPants"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="@string/pants"
+            android:elevation="4dp"
+            android:src="@drawable/sample_pants"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewShirt"
+            tools:ignore="ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/pantsArrowLeft"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/left_arrow_pants"
+            android:src="@drawable/arrow_left"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewPants"
+            app:layout_constraintEnd_toStartOf="@id/imageViewPants"
+            app:layout_constraintTop_toTopOf="@id/imageViewPants" />
+
+        <ImageView
+            android:id="@+id/pantsArrowRight"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/right_arrow_pants"
+            android:src="@drawable/arrow_right"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewPants"
+            app:layout_constraintStart_toEndOf="@id/imageViewPants"
+            app:layout_constraintTop_toTopOf="@id/imageViewPants" />
+
+        <ImageButton
+            android:id="@+id/addShirt"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            android:background="@null"
+            android:contentDescription="@string/add_shirt"
+            android:elevation="5dp"
+            android:src="@drawable/plus_small"
+            app:layout_constraintEnd_toEndOf="@id/imageViewShirt"
+            app:layout_constraintTop_toTopOf="@id/imageViewShirt"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <ImageButton
+            android:id="@+id/addPants"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            android:background="@null"
+            android:contentDescription="@string/add_pants"
+            android:elevation="5dp"
+            android:src="@drawable/plus_small"
+            app:layout_constraintEnd_toEndOf="@id/imageViewPants"
+            app:layout_constraintTop_toTopOf="@id/imageViewPants"
+            tools:ignore="TouchTargetSizeCheck" />
+
+
+        <ImageButton
+            android:id="@+id/ai_outfit"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="@string/ai_outfit"
+            android:elevation="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ai_outfit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewPants" />
+
+
+        <Switch
+            android:id="@+id/use_ai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="@id/ai_icon"
+            app:layout_constraintEnd_toStartOf="@id/ai_icon"
+            app:layout_constraintTop_toTopOf="@id/ai_icon" />
+
+        <ImageView
+            android:id="@+id/ai_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@string/ai_icon"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ai_icon"
+            app:layout_constraintBottom_toBottomOf="@id/appName"
+            app:layout_constraintEnd_toStartOf="@id/appName"
+            app:layout_constraintTop_toTopOf="@id/appName" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <View
         android:id="@+id/loadingOverlay"
         android:layout_width="match_parent"

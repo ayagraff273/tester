@@ -15,6 +15,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,7 +80,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ProgressBar progressBar;
     private View overlay;
     private ImageView ai_icon;
-
+    private ImageView no_internet;
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback networkCallback;
+    private boolean isthereinternet;
 
     private List<ClothingItem> getShirtRepository() {
         return ClothingItemRepository.getInstance().getShirtItems();
@@ -86,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return ClothingItemRepository.getInstance().getPantsItems();
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +102,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         outfitFinder = DataManagerFactory.getOutfitFinder();
         validateCurrentUser();
         setContentView(R.layout.activity_main);
+        no_internet=findViewById(R.id.no_internet);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new ConnectivityManager.NetworkCallback() {
+
+            @Override
+            public void onAvailable(Network network) {
+                runOnUiThread(() -> no_internet.setVisibility(View.GONE));
+                isthereinternet=true;
+
+            }
+            @Override
+            public void onLost(Network network) {
+                Toast.makeText(MainActivity.this, "no internet connection", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> no_internet.setVisibility(View.VISIBLE));
+                isthereinternet=false;
+            }
+        };
         ai_outfit = findViewById(R.id.ai_outfit);
         shirtView = findViewById(R.id.imageViewShirt);
         pantsView = findViewById(R.id.imageViewPants);
@@ -153,6 +179,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ImageButton add_shirt =findViewById(R.id.addShirt);
 
         add_shirt.setOnClickListener(view -> {
+            if (!isthereinternet) {
+                showNoInternetDialog();
+                return;
+            }
             MainActivity.this.clothingType = ClothingType.SHIRT;
             String[] options = {"take a photo", "choose from gallery"};
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -170,6 +200,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         ImageButton add_pants =findViewById(R.id.addPants);
         add_pants.setOnClickListener(view -> {
+            if (!isthereinternet) {
+                showNoInternetDialog();
+                return;
+            }
             MainActivity.this.clothingType = ClothingType.PANTS;
             String[] options = {"take a photo", "choose from gallery"};
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -202,19 +236,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
         ai_icon=findViewById(R.id.ai_icon);
-        /*
-        ai_icon.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("🧠 What does the AI do?");
-            builder.setMessage("With AI enabled, you'll get smart descriptions for your clothes and unlock the Generate Outfit button — it can create a stylish look for you with one tap!");
-            builder.setPositiveButton("Got it", (dialog, which) -> dialog.dismiss());
-            builder.show();
-        })*/
-
         ai_icon.setOnClickListener(v -> {
             SpannableString title = new SpannableString(" What does the AI do?🧠");
             title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), 0);
-            title.setSpan(new RelativeSizeSpan(1.2f), 0, title.length(), 0); // הגדלה
+            title.setSpan(new RelativeSizeSpan(1.2f), 0, title.length(), 0);
 
             SpannableString message = new SpannableString(
                     "With AI enabled, you'll get smart descriptions for your clothes." +
@@ -231,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             dialog.show();
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(this, R.color.black)); // תחליפי לצבע שלך
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
         });
 
         Switch use_ai = findViewById(R.id.use_ai);
@@ -241,27 +266,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 PreferencesManager.setUseGenAI(this, isChecked));
 
         ai_outfit.setOnClickListener(v -> {
-
-            if (!PreferencesManager.getUseGenAI(MainActivity.this)) {
-                Toast.makeText(MainActivity.this, "You need to enable AI to use this feature!", Toast.LENGTH_LONG).show();
+            if(!isthereinternet){
+                showNoInternetDialog();
                 return;
+
             }
-            final EditText input = new EditText(MainActivity.this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            else{
+                if (!PreferencesManager.getUseGenAI(MainActivity.this)) {
+                    Toast.makeText(MainActivity.this, "You need to enable AI to use this feature!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                final EditText input = new EditText(MainActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Let's build a smart outfit!")
-                    .setMessage("Enter your desired outfit:")
-                    .setView(input)  // הוספת EditText לדיאלוג
-                    .setPositiveButton("Send", (dialog, id) -> {
-                         userdesc = input.getText().toString();
-                         latestdesc = userdesc;
-                        generate_outfit(userdesc);
-                    })
-                    .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Let's build a smart outfit!")
+                        .setMessage("Enter your desired outfit:")
+                        .setView(input)  // הוספת EditText לדיאלוג
+                        .setPositiveButton("Send", (dialog, id) -> {
+                            userdesc = input.getText().toString();
+                            latestdesc = userdesc;
+                            generate_outfit(userdesc);
+                        })
+                        .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
 
-            builder.create().show();
+                builder.create().show();
+            }
+
         });
+    }
+
+    private void showNoInternetDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("No Internet Connection")
+                .setMessage("This feature requires an internet connection. Please connect and try again.")
+                .setPositiveButton("OK", null)
+                .show();
     }
     private void checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -342,11 +382,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (accelerometer != null) {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
         }
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+            connectivityManager.registerDefaultNetworkCallback(networkCallback);
+        } else{
+            NetworkRequest networkrequest= new NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
+            connectivityManager.registerNetworkCallback(networkrequest,networkCallback);
+        }
     }
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+        connectivityManager.unregisterNetworkCallback(networkCallback);
     }
 
     private void openCamera() {
@@ -584,5 +631,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
+
+
 
 }
