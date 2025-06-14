@@ -175,6 +175,8 @@
         app:layout_constraintEnd_toEndOf="@id/imageViewPants"
         app:layout_constraintTop_toTopOf="@id/imageViewPants"
         tools:ignore="TouchTargetSizeCheck" />
+
+
     <ImageButton
         android:id="@+id/ai_outfit"
         android:layout_width="150dp"
@@ -220,6 +222,12 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"/>
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"

@@ -10,6 +10,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,6 +21,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private long lastShakeTime = 0;
     private ImageButton ai_outfit;
     private ProgressBar progressBar;
+    private View overlay;
+    private ImageView ai_icon;
 
 
     private List<ClothingItem> getShirtRepository() {
@@ -141,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         progressBar = findViewById(R.id.progressBar);
+        overlay = findViewById(R.id.loadingOverlay);
+
 
         ImageButton add_shirt =findViewById(R.id.addShirt);
 
@@ -193,6 +201,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
+        ai_icon=findViewById(R.id.ai_icon);
+        /*
+        ai_icon.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("🧠 What does the AI do?");
+            builder.setMessage("With AI enabled, you'll get smart descriptions for your clothes and unlock the Generate Outfit button — it can create a stylish look for you with one tap!");
+            builder.setPositiveButton("Got it", (dialog, which) -> dialog.dismiss());
+            builder.show();
+        })*/
+
+        ai_icon.setOnClickListener(v -> {
+            SpannableString title = new SpannableString(" What does the AI do?🧠");
+            title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), 0);
+            title.setSpan(new RelativeSizeSpan(1.2f), 0, title.length(), 0); // הגדלה
+
+            SpannableString message = new SpannableString(
+                    "With AI enabled, you'll get smart descriptions for your clothes." +
+                            "It can create a stylish look for you with any request you have!\n\n" +
+                            "You can turn on and off the AI feature whenever you want."
+            );
+
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton("Got it", (d, which) -> d.dismiss())
+                    .create();
+
+            dialog.show();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black)); // תחליפי לצבע שלך
+        });
 
         Switch use_ai = findViewById(R.id.use_ai);
         boolean isGenAIEnabled = PreferencesManager.getUseGenAI(this);
@@ -333,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
+                    overlay.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.VISIBLE);
                     databaseManager.uploadImageToDatabase(
                             MainActivity.this,
@@ -350,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Intent data = result.getData();
                     if (data != null) {
                         Uri selectedImage = data.getData();
+                        overlay.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.VISIBLE);
                         Toast.makeText(this, "loading...", Toast.LENGTH_SHORT).show();
                         databaseManager.uploadImageToDatabase(
@@ -408,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Glide.with(this).load(getPantsRepository().get(currentPantsIndex).getImageUrl()).into(pantsView);
     }
     public void generate_outfit(String userDesc){
+        overlay.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
         outfitFinder.findOutfit(userDesc, ClothingItemRepository.getInstance().getShirtItems(),
@@ -415,6 +458,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     @Override
                     public void onFindOutfitSuccess(String shirtId, String pantsId, boolean found, String explanation) {
                         runOnUiThread(() -> {
+                            overlay.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
                             onOutfitFound(shirtId, pantsId, found, explanation);
                         });
@@ -424,6 +468,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     @Override
                     public void onFindOutfitFailed(String errorMessage) {
                         runOnUiThread(() -> {
+                            overlay.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
                             onOutfitNotFound(errorMessage);
                         });
@@ -502,6 +547,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void handleImageUploaded(ClothingItem item) {
+        overlay.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
 
         runOnUiThread(() -> {
